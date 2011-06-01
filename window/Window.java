@@ -4,7 +4,6 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 
 import application.Application;
-import application.SmoothChange;
 
 public class Window {
 	
@@ -12,20 +11,23 @@ public class Window {
 	
 	private Integer posiX, posiY, width, height;
 	private Integer oldPosiX, oldPosiY, oldWidth, oldHeight;
-	private Boolean iconified=false; //deprecated
 	private Boolean maximised=false;
 
 	private Application app;
 	
 	
-	public Window(int x, int y, int w, int h) {
+	public Window(Application parApp, int x, int y, int w, int h) {
 		
 		posiX = x; posiY = y;
 		width=w; height=h;
 		
-		app = new SmoothChange();
+		app = parApp;
 	}
-
+	
+	public void kill () {
+		app.kill();
+		app = null;
+	}
 	
 	public void draw(Graphics2D context) {
 		context.setClip(posiX, posiY, width, height);
@@ -113,14 +115,6 @@ public class Window {
 		else
 			height+=parHeight;
 	}
-
-	public Boolean isIconified() {
-		return iconified;
-	}
-
-	public void setIconified(Boolean iconified) {
-		this.iconified = iconified;
-	}
 	
 	public Boolean isMaximised() {
 		return maximised;
@@ -129,6 +123,7 @@ public class Window {
 	public void setMaximised(Boolean maximised) {
 		this.maximised = maximised;
 	}
+	
 	public void save() {
 		oldPosiX=posiX; 
 		oldPosiY=posiY; 

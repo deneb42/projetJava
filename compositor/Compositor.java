@@ -4,6 +4,9 @@ package compositor;
  *  - pas moyen d'améliorer la fluidité de l'affichage ?
  * 
  *  - changer methode de redimentionnement
+ *  - ameliorer repaints 
+ *  - ajouter transmission des event de clic aux applications
+ *    - avant de transmettre, modifier les origines
  */
 
 import java.awt.Color;
@@ -17,8 +20,9 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.util.ArrayList;
-
 import javax.swing.JFrame;
+
+import application.SmoothChange;
 
 import window.Window;
 
@@ -67,7 +71,7 @@ public class Compositor extends JFrame implements MouseListener, MouseMotionList
 		// le nombre max d'icones sur une hauteur de fenetre
 		
 		for(int i=0;i<10;i++) {
-			windows.add(new Window(110*(1+(i%5)), 110*(1+(i/5)), 100, 100));
+			windows.add(new Window(new SmoothChange(), 110*(1+(i%5)), 110*(1+(i/5)), 100, 100));
 		} // on ajoute 10 applications
 		
 		addMouseListener(this);
@@ -108,7 +112,9 @@ public class Compositor extends JFrame implements MouseListener, MouseMotionList
 			if(collision(e.getX(), e.getY(), w.getPosiX()+w.getWidth()-Window.marginTop+Window.margin, 
 					w.getPosiY()+Window.margin, Window.marginTop-2*Window.margin, Window.marginTop-2*Window.margin)) {
 				windows.remove(w);
+				w.kill();
 				repaint(w.getPosiX(),w.getPosiY(), w.getWidth(), w.getHeight());
+				w = null;
 				return;
 			}
 			//Maximize
@@ -168,6 +174,7 @@ public class Compositor extends JFrame implements MouseListener, MouseMotionList
 				if(collision(e.getX(), e.getY(), w.getPosiX()+Window.margin, w.getPosiY()+Window.margin, 
 						w.getWidth()-2*Window.marginTop, Window.marginTop-Window.margin)) {
 					mode = 'd';
+					setCursor(new Cursor(Cursor.MOVE_CURSOR));
 				}
 				else {
 					//collision avec le margin d'en bas
@@ -202,7 +209,7 @@ public class Compositor extends JFrame implements MouseListener, MouseMotionList
 		}
 		else {
 			mode='n';
-			windows.add(new Window(mouseClickX, mouseClickY, 0, 0));
+			windows.add(new Window(new SmoothChange(), mouseClickX, mouseClickY, 0, 0));
 		}
 	}
 	

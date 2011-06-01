@@ -52,6 +52,10 @@ public class SmoothChange extends Thread implements Application{
 			} catch (InterruptedException e) {e.printStackTrace(); }
 		}
 	}
+	
+	public void kill() {
+		this.interrupt();
+	}
 
 	public void mousePressed(MouseEvent e) {}
 	public void mouseReleased(MouseEvent e) {}
