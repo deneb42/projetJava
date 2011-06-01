@@ -100,6 +100,8 @@ public class Compositor extends JFrame implements MouseListener, MouseMotionList
 		addMouseListener(this);
 		addMouseMotionListener(this);
 		addKeyListener(this);
+		
+		repaint();
 	}
 	
 	@Override
