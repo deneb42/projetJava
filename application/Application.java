@@ -31,8 +31,8 @@ public class Application extends Thread {
 	public Application() {
 		H = (float)Math.random();
 		S = (float)Math.random();
-		B = (float)Math.random();
-		valS = valB = (float)0.01;
+		B = (float)0.8;
+		valS = (float)0.01;
 		
 		couleur = new Color(Color.HSBtoRGB(H, S, B));
 		
@@ -58,14 +58,11 @@ public class Application extends Thread {
 	public void run() {
 		while(true) {
 			
-			H = (H+(float)0.01)%1;
-			if(S>1) valS=(float)-0.5*valS;
-			else if(S<0) valS=(float)-2*valS;
+			H = (H+(float)0.01);
+			
+			if(S>=1) valS=(float)-0.5*valS;
+			else if(S<=0) valS=(float)-2*valS;
 			S+=valS;
-
-			if(B>1) valB=(float)-0.5*valB;
-			else if(B<0) valB=(float)-2*valB;
-			B+=valB;
 			
 			couleur = new Color(Color.HSBtoRGB(H, S, B));
 			
