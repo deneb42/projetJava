@@ -5,6 +5,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 
 public interface Application {
+	
 	public void draw(Graphics2D context, int parX, int parY, int parW, int parH);
 	public void mousePressed(MouseEvent e);
 	public void mouseReleased(MouseEvent e);

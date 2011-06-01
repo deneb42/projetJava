@@ -11,8 +11,8 @@ public class SmoothChange extends Thread implements Application{
 
 	private static final long serialVersionUID = -6461622400547388552L;
 	
-	private Color couleur= Color.black;
 	private Integer x=0,y=0,w=0,h=0;
+	private Color couleur= Color.black;
 	private Double H, S, B, valS, CONST_VAL_S=0.01;
 	
 	public SmoothChange() {
@@ -33,14 +33,6 @@ public class SmoothChange extends Thread implements Application{
 		context.fillRect(x, y, w, h);
 	}
 
-	public Color getCouleur() {
-		return couleur;
-	}
-
-	public void setCouleur(Color couleur) {
-		this.couleur = couleur;
-	}
-	
 	@Override
 	public void run() {
 		while(true) {
@@ -57,10 +49,7 @@ public class SmoothChange extends Thread implements Application{
 			
 			try {
 				sleep(100);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			} catch (InterruptedException e) {e.printStackTrace(); }
 		}
 	}
 
