@@ -34,6 +34,7 @@ package compositor;
  */
 
 import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Toolkit;
@@ -52,34 +53,49 @@ import window.Window;
 public class Compositor extends JFrame implements MouseListener, MouseMotionListener, KeyListener {
 
 	private static final long serialVersionUID = 1493982699619655700L;
+	private static Compositor instance = null;
 	
+	
+	//variables pour les event
 	private Integer mouseClickX=0, mouseClickY=0;
 	private Character mode =' ';
 	private Boolean nPressed = false;
 	
-	private Graphics2D context;
-	
+	//applications
 	private ArrayList<Window> windows = new ArrayList<Window>();
 	private ArrayList<Window> icons = new ArrayList<Window>();
 	
+	//constantes
 	private Integer origIconX = 50, origIconY=40, padding=10;
+	private Integer iMax;
 	
+	// Fin variables ---------------------------------------------------------------------
 	
-	public Compositor(String name) {
+	public static Compositor getInstance() {
+		if (instance == null)
+			instance = new Compositor("Compositor");
+		
+		return instance;
+	}
+	
+	private Compositor(String name) {
 		super(name);
+		Compositor.instance = this;
 		setSize((int)Toolkit.getDefaultToolkit().getScreenSize().getWidth(),
 				(int)Toolkit.getDefaultToolkit().getScreenSize().getHeight()-30);
-
+		//pour prendre a peu pres la taille de l'ecran
 		setLocation(0,0);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
-		setUndecorated(true);
+		setUndecorated(true); // ne pas afficher le bandeau et les bords
 		setVisible(true);
+		createBufferStrategy(2);
 		
-		context = (Graphics2D) this.getGraphics();
+		iMax = (getHeight()-origIconY)/(padding+Window.iconSize); 
+		// le nombre max d'icones sur une hauteur de fenetre
 		
-		for(int i=0;i<15;i++) {
-			windows.add(new Window(context, 110*(1+(i%5)), 110*(1+(i/5)), 100, 100));
-		}
+		for(int i=0;i<10;i++) {
+			windows.add(new Window(110*(1+(i%5)), 110*(1+(i/5)), 100, 100));
+		} // on ajoute 10 applications
 		
 		addMouseListener(this);
 		addMouseMotionListener(this);
@@ -88,54 +104,80 @@ public class Compositor extends JFrame implements MouseListener, MouseMotionList
 	
 	@Override
 	public void paint(Graphics g) {
-		Integer iMax = (getHeight()-origIconY)/(padding+Window.iconSize);
-		
+		Graphics2D context = (Graphics2D)g;
+
 		context.setColor(Color.white);
 		context.fillRect(0, 0, getWidth(), getHeight());
 		
-		for(int i=0;i<icons.size();i++) {
-			icons.get(i).drawIcon(origIconX+(i/iMax)*(padding+Window.iconSize), origIconY+(i%iMax)*(padding+Window.iconSize));
+		if(windows.size()>0 && !windows.get(windows.size()-1).isMaximised()) {
+			for(int i=0;i<icons.size();i++) {
+				if(icons.get(i)!=null)
+					icons.get(i).drawIcon(context, origIconX+(i/iMax)*(padding+Window.iconSize), origIconY+(i%iMax)*(padding+Window.iconSize));
+			} // dessin des icones en premier (en dessous du coup)
+			
+			for(int i=0;i<windows.size();i++) // puis dessin des fenetres
+				windows.get(i).draw(context);
 		}
-		
-		for(int i=0;i<windows.size();i++)
-			windows.get(i).draw();
+		else
+			windows.get(windows.size()-1).draw(context);
 	}
 	
 	
 	
 	@Override
 	public void mouseClicked(MouseEvent e) {
-		Integer iMax = (getHeight()-origIconY)/(padding+Window.iconSize);
-		
-		if(!nPressed) {
-			for(Window w:windows) {
-				if(collision(e.getX(), e.getY(), w.getPosiX()+w.getWidth()-Window.marginTop+Window.margin, 
-						w.getPosiY()+Window.margin, Window.marginTop-2*Window.margin, Window.marginTop-2*Window.margin)) {
-					windows.remove(w);
-					repaint();
-					return;
+		for(int i=windows.size()-1;i>=0;i--) {
+			Window w = windows.get(i);
+			
+			//fermeture
+			if(collision(e.getX(), e.getY(), w.getPosiX()+w.getWidth()-Window.marginTop+Window.margin, 
+					w.getPosiY()+Window.margin, Window.marginTop-2*Window.margin, Window.marginTop-2*Window.margin)) {
+				windows.remove(w);
+				repaint(w.getPosiX(),w.getPosiY(), w.getWidth(), w.getHeight());
+				return;
+			}
+			//Maximize
+			else if(collision(e.getX(), e.getY(), w.getPosiX()+w.getWidth()-2*(Window.marginTop-Window.margin), 
+					w.getPosiY()+Window.margin, Window.marginTop-2*Window.margin, Window.marginTop-2*Window.margin)) {
+				if(w.isMaximised()) {
+					w.restore();
+					w.setMaximised(false);
 				}
-				else if(collision(e.getX(), e.getY(), w.getPosiX()+w.getWidth()-2*(Window.marginTop-Window.margin), 
-						w.getPosiY()+Window.margin, Window.marginTop-2*Window.margin, Window.marginTop-2*Window.margin)) {
-					windows.remove(w);
+				else {
+					w.save();
+					w.setMaximised(true);
+					w.setPosiX(0); w.setPosiY(0);
+					w.setWidth(getWidth()); w.setHeight(getHeight());
+					
+				}
+				windows.remove(w);
+				windows.add(w);
+				repaint();
+				return;
+			}
+			//iconify
+			else if(collision(e.getX(), e.getY(), w.getPosiX()+w.getWidth()-3*(Window.marginTop-Window.margin), 
+					w.getPosiY()+Window.margin, Window.marginTop-2*Window.margin, Window.marginTop-2*Window.margin)) {
+				windows.remove(w);
+				if(icons.indexOf(null)!=-1)
+					icons.set(icons.indexOf(null), w); // si on trouve une place libre
+				else
 					icons.add(w);
-					repaint();
-					return;
-				}
+				
+				repaint();
+				return;
 			}
-			for(int i=0;i<icons.size();i++) {
-				if(collision(e.getX(), e.getY(), origIconX+(i/iMax)*(padding+Window.iconSize), 
-						origIconY+(i%iMax)*(padding+Window.iconSize), Window.iconSize, Window.iconSize)) {
-					windows.add(icons.get(i));
-					icons.remove(i);
-					repaint();
-					return;
-				}
-			}
+			
 		}
-		else {
-			windows.add(new Window(context, e.getX(), e.getY(), 100, 100));
-			repaint();
+		//desiconification
+		for(int i=0;i<icons.size();i++) {
+			if(collision(e.getX(), e.getY(), origIconX+(i/iMax)*(padding+Window.iconSize), 
+					origIconY+(i%iMax)*(padding+Window.iconSize), Window.iconSize, Window.iconSize)) {
+				windows.add(icons.get(i));
+				icons.set(i, null);
+				repaint();
+				return;
+			}
 		}
 	}
 	
@@ -143,41 +185,56 @@ public class Compositor extends JFrame implements MouseListener, MouseMotionList
 	public void mousePressed(MouseEvent e) {
 		mouseClickX = e.getX(); mouseClickY = e.getY();
 		
-		for(int i=windows.size()-1;i>=0;i--) {
-			Window w = windows.get(i);
-			
-			//collision avec le bandeau
-			if(collision(e.getX(), e.getY(), w.getPosiX()+Window.margin, w.getPosiY()+Window.margin, w.getWidth()-Window.margin, Window.marginTop-Window.margin)) {
-				mode = 'd';
-			}
-			else {
-				//collision avec le margin d'en bas
-				if(collision(e.getX(), e.getY(), w.getPosiX(), w.getPosiY()+w.getHeight()-Window.margin, w.getWidth(), Window.margin))
-					mode = 'h';
-				/*else if(collision(e.getX(), e.getY(), w.getPosiX(), w.getPosiY(), w.getWidth(), Window.margin))
-					mode = 'H';*/
-						
-						
-				//collision avec le margin à droite
-				if(collision(e.getX(), e.getY(), w.getPosiX()+w.getWidth()-Window.margin, w.getPosiY(), Window.margin, w.getHeight())) {
-					if(mode=='h')
-						mode='a';
-					else
-						mode='w';
+		if(!nPressed) {
+			for(int i=windows.size()-1;i>=0;i--) {
+				Window w = windows.get(i);
+				
+				//collision avec le bandeau
+				if(collision(e.getX(), e.getY(), w.getPosiX()+Window.margin, w.getPosiY()+Window.margin, 
+						w.getWidth()-2*Window.marginTop, Window.marginTop-Window.margin)) {
+					mode = 'd';
+				}
+				else {
+					//collision avec le margin d'en bas
+					if(collision(e.getX(), e.getY(), w.getPosiX(), w.getPosiY()+w.getHeight()-Window.margin, w.getWidth(), Window.margin)) {
+						mode = 'h';
+						setCursor(new Cursor(Cursor.S_RESIZE_CURSOR));
+					}
+					/*else if(collision(e.getX(), e.getY(), w.getPosiX(), w.getPosiY(), w.getWidth(), Window.margin))
+						mode = 'H';*/
+							
+							
+					//collision avec le margin à droite
+					if(collision(e.getX(), e.getY(), w.getPosiX()+w.getWidth()-Window.margin, w.getPosiY(), Window.margin, w.getHeight())) {
+						if(mode=='h') {
+							mode='a';
+							setCursor(new Cursor(Cursor.SE_RESIZE_CURSOR));
+						}
+						else {
+							mode='w';
+							setCursor(new Cursor(Cursor.E_RESIZE_CURSOR));
+						}
+					}
+				}
+				
+				if(mode!=' ') {
+					windows.remove(w);
+					windows.add(w);
+					w.setMaximised(false);
+					return;
 				}
 			}
-			
-			if(mode!=' ') {
-				windows.remove(w);
-				windows.add(w);
-				return;
-			}
+		}
+		else {
+			mode='n';
+			windows.add(new Window(mouseClickX, mouseClickY, 0, 0));
 		}
 	}
+	
 
 	@Override
 	public void mouseReleased(MouseEvent e) {
-
+/*
 		switch(mode) {
 			case 'd':
 				windows.get(windows.size()-1).translate(e.getX() - mouseClickX, e.getY() - mouseClickY);
@@ -188,7 +245,7 @@ public class Compositor extends JFrame implements MouseListener, MouseMotionList
 			/*case 'H':
 				windows.get(windows.size()-1).translate(0, e.getY() - mouseClickY);
 				windows.get(windows.size()-1).addHeight(mouseClickY - e.getY());
-				break;*/
+				break;*
 			case 'w':
 				windows.get(windows.size()-1).addWidth(e.getX() - mouseClickX);
 				break;
@@ -200,9 +257,10 @@ public class Compositor extends JFrame implements MouseListener, MouseMotionList
 		
 		if(mode!=' ')
 			repaint();
-		
+*/
 		mode = ' ';
 		mouseClickX = mouseClickY = 0;
+		setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
 	}
 	
 	@Override
@@ -217,7 +275,7 @@ public class Compositor extends JFrame implements MouseListener, MouseMotionList
 			case 'w':
 				windows.get(windows.size()-1).addWidth(e.getX() - mouseClickX);
 				break;
-			case 'a':
+			case 'a': case 'n':
 				windows.get(windows.size()-1).addHeight(e.getY() - mouseClickY);
 				windows.get(windows.size()-1).addWidth(e.getX() - mouseClickX);
 				break;
@@ -228,6 +286,19 @@ public class Compositor extends JFrame implements MouseListener, MouseMotionList
 			mouseClickY=e.getY();
 			repaint();
 		}
+	}
+	
+	
+	@Override
+	public void keyPressed(KeyEvent e) {
+		if(e.getKeyChar()=='n')
+			nPressed=true;	
+	}
+
+	@Override
+	public void keyReleased(KeyEvent e) {
+		if(e.getKeyChar()=='n')
+			nPressed=false;
 	}
 	
 	@Override // but useless
@@ -250,17 +321,4 @@ public class Compositor extends JFrame implements MouseListener, MouseMotionList
     		
     	return true;
     }
-
-	@Override
-	public void keyPressed(KeyEvent e) {
-		if(e.getKeyChar()=='n')
-			nPressed=true;	
-	}
-
-	@Override
-	public void keyReleased(KeyEvent e) {
-		if(e.getKeyChar()=='n')
-			nPressed=false;
-	}
-
 }

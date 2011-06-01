@@ -10,46 +10,55 @@ public class Window {
 	public static Integer marginTop=20, margin=4, iconSize=10;
 	
 	private Integer posiX, posiY, width, height;
+	private Integer oldPosiX, oldPosiY, oldWidth, oldHeight;
 	private Boolean iconified=false; //deprecated
-	
-	private Graphics2D context;
+	private Boolean maximised=false;
 
 	private Application app;
 	
 	
-	public Window(Graphics2D parContext, int x, int y, int w, int h) {
+	public Window(int x, int y, int w, int h) {
 		
 		posiX = x; posiY = y;
 		width=w; height=h;
-		context = parContext;
 		
 		app = new Application();
 	}
 
 	
-	public void draw() {
+	public void draw(Graphics2D context) {
+		context.setClip(posiX, posiY, width, height);
+		
 		context.setColor(Color.black);
 		context.fillRect(posiX, posiY, width, height);
 		
 		//croix
 		context.setColor(Color.white);
-		context.drawRect(posiX+width-marginTop+margin, posiY+margin, marginTop-2*margin, marginTop-2*margin);
+		context.drawRect(posiX+width-marginTop+margin, posiY+margin, 
+				marginTop-2*margin, marginTop-2*margin);
 		context.drawLine(posiX+width-marginTop+margin, posiY+margin, 
-							posiX+width-margin, posiY+marginTop-margin);
+				posiX+width-margin, posiY+marginTop-margin);
 		context.drawLine(posiX+width-marginTop+margin, posiY+marginTop-margin, 
-							posiX+width-margin, posiY+margin);
+				posiX+width-margin, posiY+margin);
+		
+		//maximisation
+		context.drawRect(posiX+width-2*(marginTop-margin), posiY+margin, 
+				marginTop-2*margin, marginTop-2*margin);
+		context.drawRect(posiX+width-2*(marginTop-margin)+margin/2, 
+				posiY+margin+margin/2, marginTop-3*margin, marginTop-3*margin-margin/2);
 		
 		// minimalisation
-		context.drawRect(posiX+width-2*(marginTop-margin), posiY+margin, marginTop-2*margin, marginTop-2*margin);
-		context.fillRect(posiX+width-2*(marginTop-margin)+margin/2, posiY+marginTop-2*margin, marginTop-3*margin, margin/2);
+		context.drawRect(posiX+width-3*(marginTop-margin), posiY+margin, marginTop-2*margin, marginTop-2*margin);
+		context.fillRect(posiX+width-3*(marginTop-margin)+margin/2, posiY+marginTop-2*margin, marginTop-3*margin, margin/2);
 		
+		context.setClip(posiX+margin, posiY+marginTop, 
+				width-2*margin, height-marginTop-margin);
 		app.draw(context, posiX+margin, posiY+marginTop, 
 				width-2*margin, height-marginTop-margin);
 	}
 	
-	public void drawIcon(Integer x, Integer y) {
-		context.setColor(app.getCouleur());
-		context.fillRect(x, y, iconSize, iconSize);
+	public void drawIcon(Graphics2D context, Integer x, Integer y) {
+		app.draw(context, x, y, iconSize, iconSize);
 	}
 	
 	
@@ -110,5 +119,26 @@ public class Window {
 
 	public void setIconified(Boolean iconified) {
 		this.iconified = iconified;
+	}
+	
+	public Boolean isMaximised() {
+		return maximised;
+	}
+
+	public void setMaximised(Boolean maximised) {
+		this.maximised = maximised;
+	}
+	public void save() {
+		oldPosiX=posiX; 
+		oldPosiY=posiY; 
+		oldWidth=width; 
+		oldHeight=height;
+	}
+	
+	public void restore() {
+		posiX=oldPosiX; 
+		posiY=oldPosiY;
+		width=oldWidth;
+		height=oldHeight;
 	}
 }
