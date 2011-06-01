@@ -118,7 +118,7 @@ public class Compositor extends JFrame implements MouseListener, MouseMotionList
 			for(int i=0;i<windows.size();i++) // puis dessin des fenetres
 				windows.get(i).draw(context);
 		}
-		else
+		else if(windows.size()>0)
 			windows.get(windows.size()-1).draw(context);
 	}
 	
