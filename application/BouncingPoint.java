@@ -1,7 +1,10 @@
 package application;
 
+import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
+
+import compositor.Compositor;
 
 public class BouncingPoint implements Application{
 
@@ -69,6 +72,13 @@ public class BouncingPoint implements Application{
 	public void keyTyped(KeyEvent e) {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public void draw(Graphics2D context, int parX, int parY, int parW, int parH) {
+
+		
+		context.fillRect(x, y, w, h);
 	}
 
 }

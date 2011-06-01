@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 
 import application.Application;
+import application.SmoothChange;
 
 public class Window {
 	
@@ -22,7 +23,7 @@ public class Window {
 		posiX = x; posiY = y;
 		width=w; height=h;
 		
-		app = new Application();
+		app = new SmoothChange();
 	}
 
 	
