@@ -2,9 +2,25 @@ package application;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
 
 import compositor.Compositor;
 
+public interface Application {
+  public void mousePressed(MouseEvent e);
+  public void mouseReleased(MouseEvent e);
+  public void mouseMoved(MouseEvent e);
+  public void mouseDragged(MouseEvent e);
+  public void mouseClicked(MouseEvent e);
+  public void mouseWheel(MouseEvent e);
+  public void mouseEntered(MouseEvent e);
+  public void mouseExited(MouseEvent e);
+  public void keyPressed(KeyEvent e);
+  public void keyReleased(KeyEvent e);
+  public void keyTyped(KeyEvent e);
+}
+/*
 public class Application extends Thread {
 	private static final long serialVersionUID = -6461622400547388552L;
 	
@@ -63,4 +79,4 @@ public class Application extends Thread {
 			}
 		}
 	}
-}
+}*/

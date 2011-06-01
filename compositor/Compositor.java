@@ -3,34 +3,7 @@ package compositor;
 /*TODO :
  *  - pas moyen d'améliorer la fluidité de l'affichage ?
  * 
- * - agrandissement réduction
- * - new fenetre
- */
-
-/* Sujet : 
-  
-    Pour commencer, nous allons donc implémenter un gestinnaire de fenêtre basique. Pour ceci, nous allons créer
-	une application java 2D. Dans une première phase le contenu de vos fenêtres seront de simples rectangles de
-	couleur. Vous pouvez vous inspirer du gestionnaire TWM qui est le gestionnaire de fenêtre par défaut du
-	système de fenêtrage X Window1. En particulier, vous devrez implémenter :
-	Le déplacement ;
-	Le redimentionnement ;
-	La maximisation ;
-	L’iconification ;
-	La fermeture ;
-	Pour l’instant l’ouverture d’une nouvelle fenêtre s’effectura en appuyant sur la touche “N” du clavier puis en
-	cliquant, avec le bouton gauche de la sourie, pour indiquer la position du coin supérieur gauche de la fenêtre.
-	Par la suite l’utilisateur doit faire glisser le curseur (en maintenant appuyé le boutton gauche appuyé) puis
-	relacher le bouton pour indique le coin inférieur droit de la nouvelle fenêtre.
-	En ce qui concerne l’iconification des fenêtres, elle doit faire apparêtre un caré de la même couleur que le
-	contenu de la fenêtre dans le coin supérieur gauche de l’écran. Les icones se placent automatiquement en
-	partant du coin supérieur gauche de l’écran et en descendant, puis en créant de nouvelles colones s’il ne faut.
-	Double cliquer sur une icone doit permettre de restaurer la fenêtre dans l’état dans laquelle elle se trouvait au
-	moment de l’iconification. L’icone disparaît alors.
-	Attention !!! Le gestionaire de fenêtre doit “demander” à chaque application, modélisée ici par une classe java
-	de se dessiner en lui fournissant le rectangle qui lui est alloué. Le gestionnaire est responsable du dessin du
-	décor autour de la fenêtre !!! Pour éviter qu’une application ne dépase de la zone qui lui est alloué, le
-	gestionnaire doit poser des “clipping” adéquats.
+ *  - changer methode de redimentionnement
  */
 
 import java.awt.Color;
