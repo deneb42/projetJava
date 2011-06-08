@@ -7,10 +7,12 @@ import application.Application;
 
 public class Window {
 	
-	public static final Integer marginTop=20, margin=4, iconSize=10;
+	public static final Integer marginTop=20, margin=4, iconSize=10, defaultSizeX=100, defaultSizeY=100, 
+						sizeButton = marginTop-2*margin;
 	
 	private Integer posiX, posiY, width, height;
 	private Integer oldPosiX, oldPosiY, oldWidth, oldHeight;
+	private Integer posiXClose, posiXMaximize, posiXIconify;
 	private Boolean maximised=false;
 
 	private Application app;
@@ -20,8 +22,13 @@ public class Window {
 		
 		posiX = x; posiY = y;
 		width=w; height=h;
+		calculatePosiXButtons();
 		
 		app = parApp;
+	}
+	
+	public Window(Application parApp, int x, int y) {
+		this(parApp, x, y, defaultSizeX, defaultSizeY);
 	}
 	
 	@Override
@@ -38,33 +45,62 @@ public class Window {
 		
 		//croix
 		context.setColor(Color.white);
-		context.drawRect(posiX+width-marginTop+margin, posiY+margin, 
-				marginTop-2*margin, marginTop-2*margin);
-		context.drawLine(posiX+width-marginTop+margin, posiY+margin, 
-				posiX+width-margin, posiY+marginTop-margin);
-		context.drawLine(posiX+width-marginTop+margin, posiY+marginTop-margin, 
-				posiX+width-margin, posiY+margin);
+		context.drawRect(posiXClose, posiY+margin, sizeButton, sizeButton);
+		context.drawLine(posiXClose, posiY+margin, posiX+width-margin, posiY+marginTop-margin);
+		context.drawLine(posiXClose, posiY+marginTop-margin, posiX+width-margin, posiY+margin);
 		
 		//maximisation
-		context.drawRect(posiX+width-2*(marginTop-margin), posiY+margin, 
-				marginTop-2*margin, marginTop-2*margin);
-		context.drawRect(posiX+width-2*(marginTop-margin)+margin/2, 
-				posiY+margin+margin/2, marginTop-3*margin, marginTop-3*margin-margin/2);
+		context.drawRect(posiXMaximize, posiY+margin, sizeButton, sizeButton);
+		context.drawRect(posiXMaximize+margin/2, posiY+margin+margin/2, 
+				marginTop-3*margin, marginTop-3*margin-margin/2);
 		
 		// minimalisation
-		context.drawRect(posiX+width-3*(marginTop-margin), posiY+margin, marginTop-2*margin, marginTop-2*margin);
-		context.fillRect(posiX+width-3*(marginTop-margin)+margin/2, posiY+marginTop-2*margin, marginTop-3*margin, margin/2);
+		context.drawRect(posiXIconify, posiY+margin, sizeButton, sizeButton);
+		context.fillRect(posiXIconify+margin/2, posiY+marginTop-2*margin, marginTop-3*margin, margin/2);
 		
 		context.setClip(posiX+margin, posiY+marginTop, 
 				width-2*margin, height-marginTop-margin);
 		app.draw(context, posiX+margin, posiY+marginTop, 
 				width-2*margin, height-marginTop-margin);
 	}
-	
+
 	public void drawIcon(Graphics2D context, Integer x, Integer y) {
 		app.draw(context, x, y, iconSize, iconSize);
 	}
 	
+	public void save() {
+		oldPosiX=posiX; 
+		oldPosiY=posiY; 
+		oldWidth=width; 
+		oldHeight=height;
+	}
+	
+	public void restore() {
+		posiX=oldPosiX; 
+		posiY=oldPosiY;
+		width=oldWidth;
+		height=oldHeight;
+		calculatePosiXButtons();
+	}
+	
+	private void calculatePosiXButtons() {
+		posiXClose = posiX+width-marginTop+margin;
+		posiXMaximize = posiX+width-2*(marginTop-margin);
+		posiXIconify = posiX+width-3*(marginTop-margin);
+	}
+	
+	
+	public Integer getPosiXClose() {
+		return posiXClose;
+	}
+
+	public Integer getPosiXMaximize() {
+		return posiXMaximize;
+	}
+
+	public Integer getPosiXIconify() {
+		return posiXIconify;
+	}
 	
 	public Integer getPosiX() {
 		return posiX;
@@ -72,6 +108,7 @@ public class Window {
 
 	public void setPosiX(Integer posiX) {
 		this.posiX = posiX;
+		calculatePosiXButtons();
 	}
 
 	public Integer getPosiY() {
@@ -85,6 +122,7 @@ public class Window {
 	public void translate(Integer x, Integer y) {
 		posiX+=x;
 		posiY+=y;
+		calculatePosiXButtons();
 	}
 
 	public Integer getWidth() {
@@ -101,29 +139,17 @@ public class Window {
 	}
 
 	public void setHeight(Integer parHeight) {
-		if(parHeight>=2*marginTop)
+		if(parHeight>=2*marginTop) {
 			height=parHeight;
+			calculatePosiXButtons();
+		}
 	}
-
+	
 	public Boolean isMaximised() {
 		return maximised;
 	}
 
 	public void setMaximised(Boolean maximised) {
 		this.maximised = maximised;
-	}
-	
-	public void save() {
-		oldPosiX=posiX; 
-		oldPosiY=posiY; 
-		oldWidth=width; 
-		oldHeight=height;
-	}
-	
-	public void restore() {
-		posiX=oldPosiX; 
-		posiY=oldPosiY;
-		width=oldWidth;
-		height=oldHeight;
 	}
 }

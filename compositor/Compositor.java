@@ -2,8 +2,9 @@ package compositor;
 
 /*TODO :
  *  - pas moyen d'améliorer la fluidité de l'affichage ?
- * 
- *  - ameliorer repaints 
+ *  	- ameliorer repaints                             => tester
+ *  - verifier maj de l'affichage (possible problème)
+ *  
  *  - ajouter transmission des event de clic aux applications
  *    - avant de transmettre, modifier les origines
  */
@@ -41,7 +42,7 @@ public class Compositor extends JFrame implements MouseListener, MouseMotionList
 	private ArrayList<Window> windows = new ArrayList<Window>();
 	private ArrayList<Window> icons = new ArrayList<Window>();
 	
-	//constantes
+	//constantes icones
 	private Integer origIconX = 50, origIconY=40, padding=10;
 	private Integer iMax;
 	
@@ -70,7 +71,7 @@ public class Compositor extends JFrame implements MouseListener, MouseMotionList
 		// le nombre max d'icones sur une hauteur de fenetre
 		
 		for(int i=0;i<10;i++) {
-			windows.add(new Window(new SmoothChange(), 110*(1+(i%5)), 110*(1+(i/5)), 100, 100));
+			windows.add(new Window(new SmoothChange(), 110*(1+(i%5)), 110*(1+(i/5))));
 		} // on ajoute 10 applications
 		
 		addMouseListener(this);
@@ -104,50 +105,57 @@ public class Compositor extends JFrame implements MouseListener, MouseMotionList
 	
 	@Override
 	public void mouseClicked(MouseEvent e) {
-		for(int i=windows.size()-1;i>=0;i--) {
+		
+		for(int i=windows.size()-1;i>=0;i--) { // parcours de la fin au debut (pour prendre les fenetres par ordre d'apparition
 			Window w = windows.get(i);
 			
-			//fermeture
-			if(collision(e.getX(), e.getY(), w.getPosiX()+w.getWidth()-Window.marginTop+Window.margin, 
-					w.getPosiY()+Window.margin, Window.marginTop-2*Window.margin, Window.marginTop-2*Window.margin)) {
-				windows.remove(w);
-				repaint(w.getPosiX(),w.getPosiY(), w.getWidth(), w.getHeight());
-				w = null;
-				return;
-			}
-			//Maximize
-			else if(collision(e.getX(), e.getY(), w.getPosiX()+w.getWidth()-2*(Window.marginTop-Window.margin), 
-					w.getPosiY()+Window.margin, Window.marginTop-2*Window.margin, Window.marginTop-2*Window.margin)) {
-				if(w.isMaximised()) {
-					w.restore();
-					w.setMaximised(false);
-				}
-				else {
-					w.save();
-					w.setMaximised(true);
-					w.setPosiX(0); w.setPosiY(0);
-					w.setWidth(getWidth()); w.setHeight(getHeight());
-					
-				}
-				windows.remove(w);
-				windows.add(w);
-				repaint();
-				return;
-			}
-			//iconify
-			else if(collision(e.getX(), e.getY(), w.getPosiX()+w.getWidth()-3*(Window.marginTop-Window.margin), 
-					w.getPosiY()+Window.margin, Window.marginTop-2*Window.margin, Window.marginTop-2*Window.margin)) {
-				windows.remove(w);
-				if(icons.indexOf(null)!=-1)
-					icons.set(icons.indexOf(null), w); // si on trouve une place libre
-				else
-					icons.add(w);
+			if(collision(e.getX(), e.getY(), w.getPosiX(), w.getPosiY(), w.getWidth(), w.getHeight())) {
+			//premier test pour voir si collision avec la fenetre (optimisation + evite des erreurs si les boutons sortent de la fenetre)
 				
-				repaint();
-				return;
+				//fermeture
+				if(collision(e.getX(), e.getY(), w.getPosiXClose(), w.getPosiY()+Window.margin, 
+						Window.sizeButton, Window.sizeButton)) {
+					windows.remove(w);
+					repaint(w.getPosiX(),w.getPosiY(), w.getWidth(), w.getHeight());
+					w = null;
+					return;
+				}
+				
+				//Maximize
+				if(collision(e.getX(), e.getY(), w.getPosiXMaximize(), w.getPosiY()+Window.margin, 
+						Window.sizeButton, Window.sizeButton)) {
+					if(w.isMaximised()) {
+						w.restore();
+						w.setMaximised(false);
+					}
+					else {
+						w.save();
+						w.setMaximised(true);
+						w.setPosiX(0); w.setPosiY(0);
+						w.setWidth(getWidth()); w.setHeight(getHeight());
+						
+					}
+					windows.remove(w);
+					windows.add(w);
+					repaint();
+					return;
+				}
+				
+				//iconify
+				if(collision(e.getX(), e.getY(), w.getPosiXIconify(), w.getPosiY()+Window.margin, 
+						Window.sizeButton, Window.sizeButton)) {
+					windows.remove(w);
+					if(icons.indexOf(null)!=-1)
+						icons.set(icons.indexOf(null), w); // si on trouve une place libre
+					else
+						icons.add(w);
+					
+					repaint();
+					return;
+				}
 			}
-			
 		}
+		
 		//desiconification
 		for(int i=0;i<icons.size();i++) {
 			if(collision(e.getX(), e.getY(), origIconX+(i/iMax)*(padding+Window.iconSize), 
@@ -164,50 +172,47 @@ public class Compositor extends JFrame implements MouseListener, MouseMotionList
 	public void mousePressed(MouseEvent e) {
 		mouseClickX = e.getX(); mouseClickY = e.getY();
 		
-		if(!nPressed) {
-			for(int i=windows.size()-1;i>=0;i--) {
-				Window w = windows.get(i);
-				
-				//collision avec le bandeau
-				if(collision(e.getX(), e.getY(), w.getPosiX()+Window.margin, w.getPosiY()+Window.margin, 
-						w.getWidth()-2*Window.marginTop, Window.marginTop-Window.margin)) {
-					mode = 'd';
-					setCursor(new Cursor(Cursor.MOVE_CURSOR));
-				}
-				else {
-					//collision avec le margin d'en bas
-					if(collision(e.getX(), e.getY(), w.getPosiX(), w.getPosiY()+w.getHeight()-Window.margin, w.getWidth(), Window.margin)) {
-						mode = 'h';
-						setCursor(new Cursor(Cursor.S_RESIZE_CURSOR));
-					}
-					/*else if(collision(e.getX(), e.getY(), w.getPosiX(), w.getPosiY(), w.getWidth(), Window.margin))
-						mode = 'H';*/
-							
-							
-					//collision avec le margin à droite
-					if(collision(e.getX(), e.getY(), w.getPosiX()+w.getWidth()-Window.margin, w.getPosiY(), Window.margin, w.getHeight())) {
-						if(mode=='h') {
-							mode='a';
-							setCursor(new Cursor(Cursor.SE_RESIZE_CURSOR));
-						}
-						else {
-							mode='w';
-							setCursor(new Cursor(Cursor.E_RESIZE_CURSOR));
-						}
-					}
+		if(nPressed) { // nouvelle fenetre
+			mode='n';
+			windows.add(new Window(new SmoothChange(), mouseClickX, mouseClickY));
+			return;
+		}
+			
+		for(int i=windows.size()-1;i>=0;i--) {
+			Window w = windows.get(i);
+			
+			//collision avec le bandeau
+			if(collision(e.getX(), e.getY(), w.getPosiX()+Window.margin, w.getPosiY()+Window.margin, 
+					w.getWidth()-3*Window.marginTop+Window.margin, Window.marginTop-Window.margin)) {
+				mode = 'd';
+				setCursor(new Cursor(Cursor.MOVE_CURSOR));
+			}
+			else {
+				//collision avec le margin d'en bas
+				if(collision(e.getX(), e.getY(), w.getPosiX(), w.getPosiY()+w.getHeight()-Window.margin, w.getWidth(), Window.margin)) {
+					mode = 'h';
+					setCursor(new Cursor(Cursor.S_RESIZE_CURSOR));
 				}
 				
-				if(mode!=' ') {
-					windows.remove(w);
-					windows.add(w);
-					w.setMaximised(false);
-					return;
+				//collision avec le margin à droite
+				if(collision(e.getX(), e.getY(), w.getPosiX()+w.getWidth()-Window.margin, w.getPosiY(), Window.margin, w.getHeight())) {
+					if(mode=='h') {
+						mode='a';
+						setCursor(new Cursor(Cursor.SE_RESIZE_CURSOR));
+					}
+					else {
+						mode='w';
+						setCursor(new Cursor(Cursor.E_RESIZE_CURSOR));
+					}
 				}
 			}
-		}
-		else {
-			mode='n';
-			windows.add(new Window(new SmoothChange(), mouseClickX, mouseClickY, 0, 0));
+			
+			if(mode!=' ') {
+				windows.remove(w);
+				windows.add(w);
+				w.setMaximised(false);
+				return;
+			}
 		}
 	}
 	
@@ -221,26 +226,33 @@ public class Compositor extends JFrame implements MouseListener, MouseMotionList
 	
 	@Override
 	public void mouseDragged(MouseEvent e) {
+		Window w = windows.get(windows.size()-1);
+
 		switch(mode) {
 			case 'd':
-				windows.get(windows.size()-1).translate(e.getX() - mouseClickX, e.getY() - mouseClickY);
+				w.translate(e.getX() - mouseClickX, e.getY() - mouseClickY);
 				break;
 			case 'h':
-				windows.get(windows.size()-1).setHeight(e.getY() - windows.get(windows.size()-1).getPosiY());
+				w.setHeight(e.getY() - w.getPosiY());
 				break;
 			case 'w':
-				windows.get(windows.size()-1).setWidth(e.getX() - windows.get(windows.size()-1).getPosiX());
+				w.setWidth(e.getX() - w.getPosiX());
 				break;
 			case 'a': case 'n':
-				windows.get(windows.size()-1).setHeight(e.getY() - windows.get(windows.size()-1).getPosiY());
-				windows.get(windows.size()-1).setWidth(e.getX() - windows.get(windows.size()-1).getPosiX());
+				w.setHeight(e.getY() - w.getPosiY());
+				w.setWidth(e.getX() - w.getPosiX());
 				break;
 		}
 		
 		if(mode != ' ') {
+			// A TESTER
+			if(mode!='d')
+				repaint(w.getPosiX(), w.getPosiY(), mouseClickX+Window.margin, mouseClickY+Window.margin);
+			else
+				repaint();
+			
 			mouseClickX=e.getX();
 			mouseClickY=e.getY();
-			repaint();
 		}
 	}
 	
