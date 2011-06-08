@@ -53,8 +53,10 @@ public class SmoothChange extends Thread implements Application{
 		}
 	}
 	
-	public void kill() {
+	@Override
+	protected void finalize() throws Throwable {
 		this.interrupt();
+		super.finalize();
 	}
 
 	public void mousePressed(MouseEvent e) {}

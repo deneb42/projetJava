@@ -112,7 +112,6 @@ public class Compositor extends JFrame implements MouseListener, MouseMotionList
 			if(collision(e.getX(), e.getY(), w.getPosiX()+w.getWidth()-Window.marginTop+Window.margin, 
 					w.getPosiY()+Window.margin, Window.marginTop-2*Window.margin, Window.marginTop-2*Window.margin)) {
 				windows.remove(w);
-				w.kill();
 				repaint(w.getPosiX(),w.getPosiY(), w.getWidth(), w.getHeight());
 				w = null;
 				return;

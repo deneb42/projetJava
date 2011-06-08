@@ -7,7 +7,6 @@ import java.awt.event.MouseEvent;
 public interface Application {
 	
 	public void draw(Graphics2D context, int parX, int parY, int parW, int parH);
-	public void kill();
 	
 	//for an implementation of mouse listener, mouse motion listener and key listener
 	public void mousePressed(MouseEvent e);

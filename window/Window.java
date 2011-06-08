@@ -7,7 +7,7 @@ import application.Application;
 
 public class Window {
 	
-	public static Integer marginTop=20, margin=4, iconSize=10;
+	public static final Integer marginTop=20, margin=4, iconSize=10;
 	
 	private Integer posiX, posiY, width, height;
 	private Integer oldPosiX, oldPosiY, oldWidth, oldHeight;
@@ -24,9 +24,10 @@ public class Window {
 		app = parApp;
 	}
 	
-	public void kill () {
-		app.kill();
+	@Override
+	protected void finalize() throws Throwable {
 		app = null;
+		super.finalize();
 	}
 	
 	public void draw(Graphics2D context) {
