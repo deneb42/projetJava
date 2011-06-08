@@ -3,7 +3,6 @@ package compositor;
 /*TODO :
  *  - pas moyen d'améliorer la fluidité de l'affichage ?
  * 
- *  - changer methode de redimentionnement
  *  - ameliorer repaints 
  *  - ajouter transmission des event de clic aux applications
  *    - avant de transmettre, modifier les origines
@@ -215,30 +214,6 @@ public class Compositor extends JFrame implements MouseListener, MouseMotionList
 
 	@Override
 	public void mouseReleased(MouseEvent e) {
-/*
-		switch(mode) {
-			case 'd':
-				windows.get(windows.size()-1).translate(e.getX() - mouseClickX, e.getY() - mouseClickY);
-				break;
-			case 'h':
-				windows.get(windows.size()-1).addHeight(e.getY() - mouseClickY);
-				break;
-			/*case 'H':
-				windows.get(windows.size()-1).translate(0, e.getY() - mouseClickY);
-				windows.get(windows.size()-1).addHeight(mouseClickY - e.getY());
-				break;*
-			case 'w':
-				windows.get(windows.size()-1).addWidth(e.getX() - mouseClickX);
-				break;
-			case 'a':
-				windows.get(windows.size()-1).addHeight(e.getY() - mouseClickY);
-				windows.get(windows.size()-1).addWidth(e.getX() - mouseClickX);
-				break;
-		}
-		
-		if(mode!=' ')
-			repaint();
-*/
 		mode = ' ';
 		mouseClickX = mouseClickY = 0;
 		setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
@@ -251,14 +226,14 @@ public class Compositor extends JFrame implements MouseListener, MouseMotionList
 				windows.get(windows.size()-1).translate(e.getX() - mouseClickX, e.getY() - mouseClickY);
 				break;
 			case 'h':
-				windows.get(windows.size()-1).addHeight(e.getY() - mouseClickY);
+				windows.get(windows.size()-1).setHeight(e.getY() - windows.get(windows.size()-1).getPosiY());
 				break;
 			case 'w':
-				windows.get(windows.size()-1).addWidth(e.getX() - mouseClickX);
+				windows.get(windows.size()-1).setWidth(e.getX() - windows.get(windows.size()-1).getPosiX());
 				break;
 			case 'a': case 'n':
-				windows.get(windows.size()-1).addHeight(e.getY() - mouseClickY);
-				windows.get(windows.size()-1).addWidth(e.getX() - mouseClickX);
+				windows.get(windows.size()-1).setHeight(e.getY() - windows.get(windows.size()-1).getPosiY());
+				windows.get(windows.size()-1).setWidth(e.getX() - windows.get(windows.size()-1).getPosiX());
 				break;
 		}
 		

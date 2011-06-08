@@ -91,32 +91,20 @@ public class Window {
 		return width;
 	}
 
-	public void setWidth(Integer width) {
-		this.width = width;
+	public void setWidth(Integer parWidth) {
+		if(parWidth>3*marginTop)
+			width=parWidth;
 	}
 	
-	public void addWidth(Integer parWidth) {
-		if(width+parWidth<2*margin)
-			width=2*margin;
-		else
-			width+=parWidth;
-	}
-
 	public Integer getHeight() {
 		return height;
 	}
 
-	public void setHeight(Integer height) {
-		this.height = height;
+	public void setHeight(Integer parHeight) {
+		if(parHeight>=2*marginTop)
+			height=parHeight;
 	}
-	
-	public void addHeight(Integer parHeight) {
-		if(height+parHeight<2*margin)
-			height=2*margin;
-		else
-			height+=parHeight;
-	}
-	
+
 	public Boolean isMaximised() {
 		return maximised;
 	}
