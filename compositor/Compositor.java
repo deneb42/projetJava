@@ -7,19 +7,26 @@ package compositor;
  *  
  *  - ajouter transmission des event de clic aux applications
  *    - avant de transmettre, modifier les origines
+ *    
+ *  - appli demande a fenetre le redessin
  */
 
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
+import java.awt.geom.Area;
 import java.util.ArrayList;
+import java.util.Timer;
+import java.util.TimerTask;
+
 import javax.swing.JFrame;
 
 import application.SmoothChange;
@@ -78,27 +85,31 @@ public class Compositor extends JFrame implements MouseListener, MouseMotionList
 		addMouseMotionListener(this);
 		addKeyListener(this);
 		
-		repaint();
+		
+		Timer test = new Timer();
+		test.scheduleAtFixedRate(new TimerTask() {
+			public void run() {
+				repaint();
+			}
+		} , 0, 100);
 	}
 	
 	@Override
 	public void paint(Graphics g) {
 		Graphics2D context = (Graphics2D)g;
+		Area drawable = new Area(new Rectangle(0,0,getWidth(),getHeight()));
 
 		context.setColor(Color.white);
 		context.fillRect(0, 0, getWidth(), getHeight());
-		
-		if(windows.size()>0 && !windows.get(windows.size()-1).isMaximised()) {
-			for(int i=0;i<icons.size();i++) {
-				if(icons.get(i)!=null)
-					icons.get(i).drawIcon(context, origIconX+(i/iMax)*(padding+Window.iconSize), origIconY+(i%iMax)*(padding+Window.iconSize));
-			} // dessin des icones en premier (en dessous du coup)
-			
-			for(int i=0;i<windows.size();i++) // puis dessin des fenetres
-				windows.get(i).draw(context);
+
+		for(int i=windows.size()-1;i>=0;i--) { // puis dessin des fenetres
+			context.setClip(drawable);
+			drawable.subtract(new Area(windows.get(i).draw(context)));
 		}
-		else if(windows.size()>0)
-			windows.get(windows.size()-1).draw(context);
+		for(int i=0;i<icons.size();i++) {
+			if(icons.get(i)!=null)
+				icons.get(i).drawIcon(context, origIconX+(i/iMax)*(padding+Window.iconSize), origIconY+(i%iMax)*(padding+Window.iconSize));
+		} // dessin des icones en premier (en dessous du coup)
 	}
 	
 	
@@ -256,25 +267,34 @@ public class Compositor extends JFrame implements MouseListener, MouseMotionList
 		}
 	}
 	
-	
 	@Override
 	public void keyPressed(KeyEvent e) {
 		if(e.getKeyChar()=='n')
-			nPressed=true;	
+			nPressed=true;
+		
+		windows.get(windows.size()-1).keyPressed(e);
 	}
-
 	@Override
 	public void keyReleased(KeyEvent e) {
 		if(e.getKeyChar()=='n')
 			nPressed=false;
+		
+		windows.get(windows.size()-1).keyReleased(e);
 	}
-	
-	@Override // but useless
+	@Override
+	public void mouseMoved(MouseEvent e) {
+		for(Window w:windows) {
+			if(collision(e.getX(), e.getY(), w.getPosiX(), w.getPosiY(), w.getWidth(), w.getHeight())) {
+				e.translatePoint(w.getPosiX(), w.getPosiY());
+				w.mouseEntered(e);
+			}
+		}
+	}
+	public void keyTyped(KeyEvent e) {windows.get(windows.size()-1).keyTyped(e);}
+	//override but useless
 	public void mouseEntered(MouseEvent e) {}
 	public void mouseExited(MouseEvent e) {}
-	public void mouseMoved(MouseEvent e) {}
-	public void keyTyped(KeyEvent arg0) {}
-
+	
 	
 	private boolean collision(int mouseX, int mouseY, int x, int y, int w, int h) {
     	

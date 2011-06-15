@@ -5,17 +5,21 @@ import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 
+import window.Window;
+
 import compositor.Compositor;
 
 public class SmoothChange extends Thread implements Application{
 
 	private static final long serialVersionUID = -6461622400547388552L;
+	private static final Double CONST_VAL_S=0.01;
 	
-	private Integer x=0,y=0,w=0,h=0;
+	private Window padre;
 	private Color couleur= Color.black;
-	private Double H, S, B, valS, CONST_VAL_S=0.01;
+	private Double H, S, B, valS;
 	
 	public SmoothChange() {
+		//padre = parP
 		H = Math.random();
 		S = Math.random();
 		B = 0.8;
@@ -26,13 +30,12 @@ public class SmoothChange extends Thread implements Application{
 		start();
 	}
 	
-	public void draw(Graphics2D context, int parX, int parY, int parW, int parH) {
-		x=parX; y=parY; w=parW; h=parH;
-		
+	public void draw(Graphics2D context, int x, int y, int w, int h) {
 		context.setColor(couleur);
 		context.fillRect(x, y, w, h);
 	}
 
+	
 	@Override
 	public void run() {
 		while(true) {
@@ -43,15 +46,16 @@ public class SmoothChange extends Thread implements Application{
 			else if(S<=valS) valS=CONST_VAL_S;
 			S+=valS;
 			
-			couleur = new Color(Color.HSBtoRGB(H.floatValue(), S.floatValue(), B.floatValue()));
+			//couleur = new Color(Color.HSBtoRGB(H.floatValue(), S.floatValue(), B.floatValue()));
 			
-			Compositor.getInstance().repaint(x,y,w,h);
+			//Compositor.getInstance().repaint();
 			
 			try {
 				sleep(100);
 			} catch (InterruptedException e) {e.printStackTrace(); }
 		}
 	}
+	
 	
 	@Override
 	protected void finalize() throws Throwable {
