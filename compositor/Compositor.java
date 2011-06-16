@@ -7,6 +7,8 @@ package compositor;
  *  
  *  - ajouter transmission des event de clic aux applications
  *    - avant de transmettre, modifier les origines
+ *    
+ *    problème avec le quittage (fucking exception)
  */
 
 import java.awt.Color;
