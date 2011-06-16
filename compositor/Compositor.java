@@ -1,9 +1,9 @@
 package compositor;
 
 /*TODO :
- *  - ameliorer repaints                             => tester
- *  
  *  - verifier maj de l'affichage (possible problème)
+ *  
+ *  icones déconnent
  *  
  *  - redimentionnement coince un peu
  *  - faire un mode modif (genre surbrillance)
@@ -274,7 +274,6 @@ public class Compositor extends JFrame implements MouseListener, MouseMotionList
 			}
 			
 			if(mode != ' ') {
-				// A TESTER
 				if(mode!='d')
 					repaint(w.getPosiX(), w.getPosiY(), mouseClickX+Window.margin, mouseClickY+Window.margin);
 				else
@@ -317,6 +316,7 @@ public class Compositor extends JFrame implements MouseListener, MouseMotionList
 		if(windows.size()>0)
 			windows.get(windows.size()-1).keyPressed(e);
 	}
+	
 	@Override
 	public void keyReleased(KeyEvent e) {
 		if(e.getKeyChar()==keyPressed)
@@ -325,6 +325,8 @@ public class Compositor extends JFrame implements MouseListener, MouseMotionList
 		if(windows.size()>0)
 			windows.get(windows.size()-1).keyReleased(e);
 	}
+	
+	@Override
 	public void keyTyped(KeyEvent e) {
 		if(windows.size()>0)
 			windows.get(windows.size()-1).keyTyped(e);
