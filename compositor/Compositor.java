@@ -4,10 +4,12 @@ package compositor;
  *  - ameliorer repaints                             => tester
  *  
  *  - verifier maj de l'affichage (possible problème)
- *
- *    problème avec le quittage (fucking exception)
  *  
  *  - redimentionnement coince un peu
+ *  - faire un mode modif (genre surbrillance)
+ *  -ajout texte aux fenetres
+ *  
+ *  faire que la gestion des collisions internes a la fenetres soient gérées directemetn dans window.
  */
 
 import java.awt.Color;
@@ -27,7 +29,6 @@ import java.util.ArrayList;
 import javax.swing.JFrame;
 
 import application.SmoothChange;
-
 import window.Window;
 
 
