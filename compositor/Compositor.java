@@ -4,9 +4,6 @@ package compositor;
  *  - ameliorer repaints                             => tester
  *  
  *  - verifier maj de l'affichage (possible problème)
- *  
- *  - ajouter transmission des event de clic aux applications
- *    - avant de transmettre, modifier les origines
  *
  *    problème avec le quittage (fucking exception)
  *  
@@ -42,8 +39,7 @@ public class Compositor extends JFrame implements MouseListener, MouseMotionList
 	
 	//variables pour les event
 	private Integer mouseClickX=0, mouseClickY=0;
-	private Character mode =' ';
-	private Boolean nPressed = false;
+	private Character mode=' ', keyPressed=' ';
 	
 	//applications
 	private ArrayList<Window> windows = new ArrayList<Window>();
@@ -186,7 +182,7 @@ public class Compositor extends JFrame implements MouseListener, MouseMotionList
 	public void mousePressed(MouseEvent e) {
 		mouseClickX = e.getX(); mouseClickY = e.getY();
 		
-		if(nPressed) { // nouvelle fenetre
+		if(keyPressed=='n') { // nouvelle fenetre
 			mode='n';
 			windows.add(new Window(new SmoothChange(), mouseClickX, mouseClickY));
 			return;
@@ -229,11 +225,13 @@ public class Compositor extends JFrame implements MouseListener, MouseMotionList
 			}
 		}
 		
-		if(collision(e.getX(), e.getY(), windows.get(windows.size()-1).getPosiX(), 
-				windows.get(windows.size()-1).getPosiY(), windows.get(windows.size()-1).getWidth(), 
-				windows.get(windows.size()-1).getHeight())) {
-			e.translatePoint(-windows.get(windows.size()-1).getPosiX(), -windows.get(windows.size()-1).getPosiY());
-			windows.get(windows.size()-1).mousePressed(e);
+		if(windows.size()>0) {
+			if(collision(e.getX(), e.getY(), windows.get(windows.size()-1).getPosiX(), 
+					windows.get(windows.size()-1).getPosiY(), windows.get(windows.size()-1).getWidth(), 
+					windows.get(windows.size()-1).getHeight())) {
+				e.translatePoint(-windows.get(windows.size()-1).getPosiX(), -windows.get(windows.size()-1).getPosiY());
+				windows.get(windows.size()-1).mousePressed(e);
+			}
 		}
 	}
 	
@@ -243,48 +241,52 @@ public class Compositor extends JFrame implements MouseListener, MouseMotionList
 		mouseClickX = mouseClickY = 0;
 		setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
 		
-		if(collision(e.getX(), e.getY(), windows.get(windows.size()-1).getPosiX(), 
-				windows.get(windows.size()-1).getPosiY(), windows.get(windows.size()-1).getWidth(), 
-				windows.get(windows.size()-1).getHeight())) {
-			e.translatePoint(-windows.get(windows.size()-1).getPosiX(), -windows.get(windows.size()-1).getPosiY());
-			windows.get(windows.size()-1).mouseReleased(e);
+		if(windows.size()>0) {
+			if(collision(e.getX(), e.getY(), windows.get(windows.size()-1).getPosiX(), 
+					windows.get(windows.size()-1).getPosiY(), windows.get(windows.size()-1).getWidth(), 
+					windows.get(windows.size()-1).getHeight())) {
+				e.translatePoint(-windows.get(windows.size()-1).getPosiX(), -windows.get(windows.size()-1).getPosiY());
+				windows.get(windows.size()-1).mouseReleased(e);
+			}
 		}
 	}
 	
 	@Override
 	public void mouseDragged(MouseEvent e) {
-		Window w = windows.get(windows.size()-1);
-
-		switch(mode) {
-			case 'd':
-				w.translate(e.getX() - mouseClickX, e.getY() - mouseClickY);
-				break;
-			case 'h':
-				w.setHeight(e.getY() - w.getPosiY());
-				break;
-			case 'w':
-				w.setWidth(e.getX() - w.getPosiX());
-				break;
-			case 'a': case 'n':
-				w.setHeight(e.getY() - w.getPosiY());
-				w.setWidth(e.getX() - w.getPosiX());
-				break;
-		}
-		
-		if(mode != ' ') {
-			// A TESTER
-			if(mode!='d')
-				repaint(w.getPosiX(), w.getPosiY(), mouseClickX+Window.margin, mouseClickY+Window.margin);
-			else
-				repaint();
+		if(windows.size()>0) {
+			Window w = windows.get(windows.size()-1);
+	
+			switch(mode) {
+				case 'd':
+					w.translate(e.getX() - mouseClickX, e.getY() - mouseClickY);
+					break;
+				case 'h':
+					w.setHeight(e.getY() - w.getPosiY());
+					break;
+				case 'w':
+					w.setWidth(e.getX() - w.getPosiX());
+					break;
+				case 'a': case 'n':
+					w.setHeight(e.getY() - w.getPosiY());
+					w.setWidth(e.getX() - w.getPosiX());
+					break;
+			}
 			
-			mouseClickX=e.getX();
-			mouseClickY=e.getY();
-		}
-		
-		if(collision(e.getX(), e.getY(), w.getPosiX(), w.getPosiY(), w.getWidth(), w.getHeight())) {
-			e.translatePoint(-w.getPosiX(), -w.getPosiY());
-			w.mouseDragged(e);
+			if(mode != ' ') {
+				// A TESTER
+				if(mode!='d')
+					repaint(w.getPosiX(), w.getPosiY(), mouseClickX+Window.margin, mouseClickY+Window.margin);
+				else
+					repaint();
+				
+				mouseClickX=e.getX();
+				mouseClickY=e.getY();
+			}
+			
+			if(collision(e.getX(), e.getY(), w.getPosiX(), w.getPosiY(), w.getWidth(), w.getHeight())) {
+				e.translatePoint(-w.getPosiX(), -w.getPosiY());
+				w.mouseDragged(e);
+			}
 		}
 	}
 	
@@ -308,19 +310,24 @@ public class Compositor extends JFrame implements MouseListener, MouseMotionList
 	
 	@Override
 	public void keyPressed(KeyEvent e) {
-		if(e.getKeyChar()=='n')
-			nPressed=true;
+		if(keyPressed == ' ')
+			keyPressed=e.getKeyChar();
 		
-		windows.get(windows.size()-1).keyPressed(e);
+		if(windows.size()>0)
+			windows.get(windows.size()-1).keyPressed(e);
 	}
 	@Override
 	public void keyReleased(KeyEvent e) {
-		if(e.getKeyChar()=='n')
-			nPressed=false;
+		if(e.getKeyChar()==keyPressed)
+			keyPressed=' ';
 		
-		windows.get(windows.size()-1).keyReleased(e);
+		if(windows.size()>0)
+			windows.get(windows.size()-1).keyReleased(e);
 	}
-	public void keyTyped(KeyEvent e) {windows.get(windows.size()-1).keyTyped(e);}
+	public void keyTyped(KeyEvent e) {
+		if(windows.size()>0)
+			windows.get(windows.size()-1).keyTyped(e);
+	}
 	
 	//override but useless
 	public void mouseEntered(MouseEvent e) {}

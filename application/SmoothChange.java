@@ -22,10 +22,9 @@ public class SmoothChange extends Thread implements Application{
 		setPadre(papa);
 	}
 	public SmoothChange() {
-		//padre = parP
 		H = Math.random();
 		S = Math.random();
-		B = Math.random(); //0.8
+		B = 0.8;
 		valS = CONST_VAL_S;
 		
 		couleur = new Color(Color.HSBtoRGB(H.floatValue(), S.floatValue(), B.floatValue()));
