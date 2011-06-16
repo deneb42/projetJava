@@ -4,6 +4,8 @@ import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 
+import window.Window;
+
 import compositor.Compositor;
 
 public class MovingShapes extends Thread implements Application{
@@ -12,7 +14,6 @@ public class MovingShapes extends Thread implements Application{
 	
 	public void draw(Graphics2D context, int parX, int parY, int parW, int parH) {
 
-		
 		context.fillRect(x, y, w, h);
 	}
 	
@@ -37,4 +38,10 @@ public class MovingShapes extends Thread implements Application{
 	public void keyPressed(KeyEvent e) {}
 	public void keyReleased(KeyEvent e) {}
 	public void keyTyped(KeyEvent e) {}
+
+	@Override
+	public void setPadre(Window papa) {
+		// TODO Auto-generated method stub
+		
+	}
 }

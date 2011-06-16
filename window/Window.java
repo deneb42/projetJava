@@ -2,6 +2,13 @@ package window;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.Image;
+import java.awt.Rectangle;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
+import java.awt.image.BufferedImage;
+
+import compositor.Compositor;
 
 import application.Application;
 
@@ -14,9 +21,9 @@ public class Window {
 	private Integer oldPosiX, oldPosiY, oldWidth, oldHeight;
 	private Integer posiXClose, posiXMaximize, posiXIconify;
 	private Boolean maximised=false;
+	private BufferedImage image;
 
 	private Application app;
-	
 	
 	public Window(Application parApp, int x, int y, int w, int h) {
 		
@@ -25,6 +32,9 @@ public class Window {
 		calculatePosiXButtons();
 		
 		app = parApp;
+		image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+		app.setPadre(this);
+		maj();
 	}
 	
 	public Window(Application parApp, int x, int y) {
@@ -37,11 +47,14 @@ public class Window {
 		super.finalize();
 	}
 	
-	public void draw(Graphics2D context) {
-		context.setClip(posiX, posiY, width, height);
+	public Rectangle draw(Graphics2D context) {
 		
 		context.setColor(Color.black);
-		context.fillRect(posiX, posiY, width, height);
+		context.fillRect(posiX, posiY, width, marginTop); // dessus
+		context.fillRect(posiX, posiY, margin, height); // coté gauche
+		context.fillRect(posiX, posiY+height-margin, width, margin); // dessous
+		context.fillRect(posiX+width-margin, posiY, margin, height); // coté droit
+		
 		
 		//croix
 		context.setColor(Color.white);
@@ -58,14 +71,27 @@ public class Window {
 		context.drawRect(posiXIconify, posiY+margin, sizeButton, sizeButton);
 		context.fillRect(posiXIconify+margin/2, posiY+marginTop-2*margin, marginTop-3*margin, margin/2);
 		
-		context.setClip(posiX+margin, posiY+marginTop, 
+		context.clipRect(posiX+margin, posiY+marginTop, 
 				width-2*margin, height-marginTop-margin);
-		app.draw(context, posiX+margin, posiY+marginTop, 
+		/*app.draw(context, posiX+margin, posiY+marginTop, 
 				width-2*margin, height-marginTop-margin);
+		*/
+
+		context.drawImage(image, null, posiX, posiY);
+		
+		return new Rectangle(posiX, posiY, width, height);
 	}
 
-	public void drawIcon(Graphics2D context, Integer x, Integer y) {
-		app.draw(context, x, y, iconSize, iconSize);
+	public Rectangle drawIcon(Graphics2D context, Integer x, Integer y) {
+		context.drawImage(image.getScaledInstance(iconSize, iconSize, Image.SCALE_DEFAULT), x, y, null);
+		
+		return new Rectangle(x, y, iconSize, iconSize);
+	}
+	
+	public void maj() {
+		app.draw(image.createGraphics(), margin, marginTop, 
+				width-2*margin, height-marginTop-margin);
+		Compositor.getInstance().repaint(posiX, posiY, width, height);
 	}
 	
 	public void save() {
@@ -81,6 +107,7 @@ public class Window {
 		width=oldWidth;
 		height=oldHeight;
 		calculatePosiXButtons();
+		image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
 	}
 	
 	private void calculatePosiXButtons() {
@@ -89,66 +116,102 @@ public class Window {
 		posiXIconify = posiX+width-3*(marginTop-margin);
 	}
 	
-	
-	public Integer getPosiXClose() {
-		return posiXClose;
-	}
-
-	public Integer getPosiXMaximize() {
-		return posiXMaximize;
-	}
-
-	public Integer getPosiXIconify() {
-		return posiXIconify;
-	}
-	
-	public Integer getPosiX() {
-		return posiX;
-	}
-
-	public void setPosiX(Integer posiX) {
-		this.posiX = posiX;
-		calculatePosiXButtons();
-	}
-
-	public Integer getPosiY() {
-		return posiY;
-	}
-
-	public void setPosiY(Integer posiY) {
-		this.posiY = posiY;
-	}
-	
 	public void translate(Integer x, Integer y) {
 		posiX+=x;
 		posiY+=y;
 		calculatePosiXButtons();
 	}
-
+	
+	//fonctions de gestion des evenements
+	public void mousePressed(MouseEvent e) {
+		if(Compositor.collision(e.getX(), e.getY(), margin, marginTop, width-2*margin, height-margin-marginTop)) {
+			e.translatePoint(-margin, -marginTop);
+			app.mousePressed(e);
+		}
+	}
+	public void mouseReleased(MouseEvent e) {
+		if(Compositor.collision(e.getX(), e.getY(), margin, marginTop, width-2*margin, height-margin-marginTop)) {
+			e.translatePoint(-margin, -marginTop);
+			app.mouseReleased(e);
+		}
+	}
+	public void mouseMoved(MouseEvent e) {
+		if(Compositor.collision(e.getX(), e.getY(), margin, marginTop, width-2*margin, height-margin-marginTop)) {
+			e.translatePoint(-margin, -marginTop);
+			app.mouseMoved(e);
+			System.out.println("lulz");
+		}
+	}
+	public void mouseDragged(MouseEvent e) {
+		if(Compositor.collision(e.getX(), e.getY(), margin, marginTop, width-2*margin, height-margin-marginTop)) {
+			e.translatePoint(-margin, -marginTop);
+			app.mouseDragged(e);
+		}
+	}
+	public void mouseClicked(MouseEvent e) {
+		if(Compositor.collision(e.getX(), e.getY(), margin, marginTop, width-2*margin, height-margin-marginTop)) {
+			e.translatePoint(-margin, -marginTop);
+			app.mouseClicked(e);
+		}
+	}
+	public void mouseWheel(MouseEvent e) {
+		
+	}
+	public void mouseEntered(MouseEvent e) {
+		
+	}
+	public void mouseExited(MouseEvent e) {
+		
+	}
+	public void keyPressed(KeyEvent e) { app.keyPressed(e); }
+	public void keyReleased(KeyEvent e) { app.keyReleased(e); }
+	public void keyTyped(KeyEvent e) { app.keyTyped(e); }
+	
+	//getters / setters ------------------------------------------------------------------------
+	public Integer getPosiXClose() {
+		return posiXClose;
+	}
+	public Integer getPosiXMaximize() {
+		return posiXMaximize;
+	}
+	public Integer getPosiXIconify() {
+		return posiXIconify;
+	}
+	public Integer getPosiX() {
+		return posiX;
+	}
+	public void setPosiX(Integer posiX) {
+		this.posiX = posiX;
+		calculatePosiXButtons();
+	}
+	public Integer getPosiY() {
+		return posiY;
+	}
+	public void setPosiY(Integer posiY) {
+		this.posiY = posiY;
+	}
 	public Integer getWidth() {
 		return width;
 	}
-
 	public void setWidth(Integer parWidth) {
-		if(parWidth>3*marginTop)
+		if(parWidth>3*marginTop) {
 			width=parWidth;
+			calculatePosiXButtons();
+			image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+		}
 	}
-	
 	public Integer getHeight() {
 		return height;
 	}
-
 	public void setHeight(Integer parHeight) {
 		if(parHeight>=2*marginTop) {
 			height=parHeight;
-			calculatePosiXButtons();
+			image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
 		}
 	}
-	
 	public Boolean isMaximised() {
 		return maximised;
 	}
-
 	public void setMaximised(Boolean maximised) {
 		this.maximised = maximised;
 	}
