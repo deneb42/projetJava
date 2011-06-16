@@ -7,8 +7,6 @@ import java.awt.event.MouseEvent;
 
 import window.Window;
 
-import compositor.Compositor;
-
 public class SmoothChange extends Thread implements Application{
 
 	private static final long serialVersionUID = -6461622400547388552L;
@@ -18,6 +16,17 @@ public class SmoothChange extends Thread implements Application{
 	private Color couleur= Color.black;
 	private Double H, S, B, valS;
 	
+	public SmoothChange(Window papa) {
+		//padre = parP
+		H = Math.random();
+		S = Math.random();
+		B = 0.8;
+		valS = CONST_VAL_S;
+		
+		couleur = new Color(Color.HSBtoRGB(H.floatValue(), S.floatValue(), B.floatValue()));
+		padre = papa;
+		start();
+	}
 	public SmoothChange() {
 		//padre = parP
 		H = Math.random();
@@ -26,7 +35,10 @@ public class SmoothChange extends Thread implements Application{
 		valS = CONST_VAL_S;
 		
 		couleur = new Color(Color.HSBtoRGB(H.floatValue(), S.floatValue(), B.floatValue()));
-		
+	}
+	
+	public void setPadre(Window papa) {
+		padre = papa;
 		start();
 	}
 	
@@ -46,9 +58,9 @@ public class SmoothChange extends Thread implements Application{
 			else if(S<=valS) valS=CONST_VAL_S;
 			S+=valS;
 			
-			//couleur = new Color(Color.HSBtoRGB(H.floatValue(), S.floatValue(), B.floatValue()));
+			couleur = new Color(Color.HSBtoRGB(H.floatValue(), S.floatValue(), B.floatValue()));
 			
-			//Compositor.getInstance().repaint();
+			padre.maj();
 			
 			try {
 				sleep(100);

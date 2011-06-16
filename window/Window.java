@@ -2,10 +2,13 @@ package window;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.Image;
 import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
+
+import compositor.Compositor;
 
 import application.Application;
 
@@ -30,6 +33,8 @@ public class Window {
 		
 		app = parApp;
 		image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+		app.setPadre(this);
+		maj();
 	}
 	
 	public Window(Application parApp, int x, int y) {
@@ -71,15 +76,22 @@ public class Window {
 		/*app.draw(context, posiX+margin, posiY+marginTop, 
 				width-2*margin, height-marginTop-margin);
 		*/
-		app.draw(image.createGraphics(), margin, marginTop, 
-				width-2*margin, height-marginTop-margin);
+
 		context.drawImage(image, null, posiX, posiY);
 		
 		return new Rectangle(posiX, posiY, width, height);
 	}
 
-	public void drawIcon(Graphics2D context, Integer x, Integer y) {
-		app.draw(context, x, y, iconSize, iconSize);
+	public Rectangle drawIcon(Graphics2D context, Integer x, Integer y) {
+		context.drawImage(image.getScaledInstance(iconSize, iconSize, Image.SCALE_DEFAULT), x, y, null);
+		
+		return new Rectangle(x, y, iconSize, iconSize);
+	}
+	
+	public void maj() {
+		app.draw(image.createGraphics(), margin, marginTop, 
+				width-2*margin, height-marginTop-margin);
+		Compositor.getInstance().repaint(posiX, posiY, width, height);
 	}
 	
 	public void save() {

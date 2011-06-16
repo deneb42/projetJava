@@ -8,7 +8,9 @@ package compositor;
  *  - ajouter transmission des event de clic aux applications
  *    - avant de transmettre, modifier les origines
  *    
- *  - appli demande a fenetre le redessin
+ *  - appli demande a fenetre le redessin (OK)
+ *  
+ *  - redimentionnement coince un peu
  */
 
 import java.awt.Color;
@@ -85,13 +87,13 @@ public class Compositor extends JFrame implements MouseListener, MouseMotionList
 		addMouseMotionListener(this);
 		addKeyListener(this);
 		
-		
+		/*
 		Timer test = new Timer();
 		test.scheduleAtFixedRate(new TimerTask() {
 			public void run() {
 				repaint();
 			}
-		} , 0, 100);
+		} , 0, 100);*/
 	}
 	
 	@Override
@@ -99,17 +101,22 @@ public class Compositor extends JFrame implements MouseListener, MouseMotionList
 		Graphics2D context = (Graphics2D)g;
 		Area drawable = new Area(new Rectangle(0,0,getWidth(),getHeight()));
 
-		context.setColor(Color.white);
-		context.fillRect(0, 0, getWidth(), getHeight());
-
 		for(int i=windows.size()-1;i>=0;i--) { // puis dessin des fenetres
 			context.setClip(drawable);
 			drawable.subtract(new Area(windows.get(i).draw(context)));
 		}
 		for(int i=0;i<icons.size();i++) {
 			if(icons.get(i)!=null)
-				icons.get(i).drawIcon(context, origIconX+(i/iMax)*(padding+Window.iconSize), origIconY+(i%iMax)*(padding+Window.iconSize));
-		} // dessin des icones en premier (en dessous du coup)
+			{
+				context.setClip(drawable);
+				drawable.subtract(new Area(icons.get(i).drawIcon(context, 
+						origIconX+(i/iMax)*(padding+Window.iconSize), origIconY+(i%iMax)*
+						(padding+Window.iconSize))));
+			}
+		}
+		context.setClip(drawable);
+		context.setColor(Color.white);
+		context.fillRect(0, 0, getWidth(), getHeight());
 	}
 	
 	
