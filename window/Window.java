@@ -21,8 +21,9 @@ public class Window {
 	private Integer oldPosiX, oldPosiY, oldWidth, oldHeight;
 	private Integer posiXClose, posiXMaximize, posiXIconify;
 	private Boolean maximised=false;
-	private BufferedImage image;
-
+	private BufferedImage image;public Window() {
+		// TODO Auto-generated constructor stub
+	}
 	private Application app;
 	
 	public Window(Application parApp, int x, int y, int w, int h) {
