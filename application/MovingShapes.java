@@ -4,6 +4,15 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Color;
 
+private Integer XSIZE = 10;
+private Integer YSIZE = 10;
+private Integer posX = -1;
+private Integer posY = -1;
+private Integer x = 0;
+private Integer y = 0;
+private Integer w = 0;
+private Integer h = 0;
+
 
 public MovingShapes() {
 	start();
@@ -14,6 +23,7 @@ public void draw(Graphics2D context, int parX, int parY, int parW, int parH) {
 	
 	context.setColor(couleur);
 	context.fillRect(x, y, w, h);
+	
 }
 
 	
@@ -33,9 +43,6 @@ public void draw(Graphics2D context, int parX, int parY, int parW, int parH) {
 	    repaint();
 	  }
 
-	  public void paint(Graphics g) {
-	    update(g);
-	  }
 
 	  public void update(Graphics g) {
 	    Graphics2D g2 = (Graphics2D) g;
