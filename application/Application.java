@@ -4,9 +4,12 @@ import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 
+import window.Window;
+
 public interface Application {
 	
 	public void draw(Graphics2D context, int parX, int parY, int parW, int parH);
+	public void setPadre(Window papa);
 	
 	//for an implementation of mouse listener, mouse motion listener and key listener
 	public void mousePressed(MouseEvent e);
