@@ -11,22 +11,77 @@ import compositor.Compositor;
 
 public class BouncingPoint extends Thread implements Application {
 	
-	private Integer x=0,y=0,w=0,h=0;
+	private Integer XSIZE = 10;
+	private Integer YSIZE = 10;
+	private Integer posX = -1;
+	private Integer posY = -1;
+	private Integer x = 0;
+	private Integer y = 0;
+	private Integer w = 0;
+	private Integer h = 0;
+	private Integer dx = 0;
+	private Integer dy = 0;
+	
+	
+	public BouncingPoint() {
+		
+		dx = (int)((Math.random()*10)+1);
+		dy = (int)((Math.random()*10)+1);
+		
+		start();
+	}
 
 	public void draw(Graphics2D context, int parX, int parY, int parW, int parH) {
 
+		x = parX; y = parY; w = parW; h = parH;
 		
-		context.fillRect(x, y, w, h);
+		if(posX == -1) {
+			posX = (int)Math.random()*parX;
+			posY = (int)Math.random()*parY;
+		}
+		
+		context.fillOval(x+posX, y+posY, XSIZE, YSIZE);
 	}
+	
+	public void move() {
+	    posX += dx;
+	    posY += dy;
+
+	    if (posX < 0) {
+	      posX = 0;
+	      dx = -dx;
+	    }
+	    if (posX + XSIZE >= w) {
+	      posX = w - XSIZE;
+	      dx = -dx;
+	    }
+	    if (posY < 0) {
+	      posY = 0;
+	      dy = -dy;
+	    }
+	    if (posY + YSIZE >= h) {
+	      posY = h - YSIZE;
+	      dy = -dy;
+	    }
+	}
+	
+	
 	
 	@Override
 	public void run() {
 		while(true) {
-			Compositor.getInstance().repaint(x,y,w,h);
+			move();
+			Compositor.getInstance().repaint(x,y,w,h); //il prend draw
 			try {
-				sleep(100);
+				sleep(50);
 			} catch (InterruptedException e) {e.printStackTrace(); }
 		}
+	}
+	
+	@Override
+	protected void finalize() throws Throwable {
+		this.interrupt();
+		super.finalize();
 	}
 	
 	public void mousePressed(MouseEvent e) {}

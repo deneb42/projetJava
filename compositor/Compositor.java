@@ -28,6 +28,7 @@ import java.util.ArrayList;
 
 import javax.swing.JFrame;
 
+import application.BouncingPoint;
 import application.SmoothChange;
 import window.Window;
 
@@ -75,7 +76,7 @@ public class Compositor extends JFrame implements MouseListener, MouseMotionList
 		// le nombre max d'icones sur une hauteur de fenetre
 		
 		for(int i=0;i<10;i++) {
-			windows.add(new Window(new SmoothChange(), 110*(1+(i%5)), 110*(1+(i/5))));
+			windows.add(new Window(new BouncingPoint(), 110*(1+(i%5)), 110*(1+(i/5))));
 		} // on ajoute 10 applications
 		
 		addMouseListener(this);

@@ -1,5 +1,6 @@
 package application;
 
+
 import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
@@ -8,14 +9,35 @@ import window.Window;
 
 import compositor.Compositor;
 
-public class MovingShapes extends Thread implements Application{
-
-	private Integer x=0,y=0,w=0,h=0;
+public class MovingShapes extends Thread implements Application {
 	
-	public void draw(Graphics2D context, int parX, int parY, int parW, int parH) {
+	private Integer XSIZE = 10;
+	private Integer YSIZE = 10;
+	private Integer posX = -1;
+	private Integer posY = -1;
+	private Integer x = 0;
+	private Integer y = 0;
+	private Integer w = 0;
+	private Integer h = 0;
+	private Integer dx = 0;
+	private Integer dy = 0;
 
-		context.fillRect(x, y, w, h);
-	}
+	
+	
+public void draw(Graphics2D context, int parX, int parY, int parW, int parH) {
+	x=parX; y=parY; w=parW; h=parH;
+	
+	context.setColor(couleur);
+	context.fillRect(x, y, w, h);
+	
+}
+
+	
+
+
+	
+	
+	
 	
 	@Override
 	public void run() {
@@ -39,9 +61,4 @@ public class MovingShapes extends Thread implements Application{
 	public void keyReleased(KeyEvent e) {}
 	public void keyTyped(KeyEvent e) {}
 
-	@Override
-	public void setPadre(Window papa) {
-		// TODO Auto-generated method stub
-		
-	}
 }
