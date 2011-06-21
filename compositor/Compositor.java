@@ -3,8 +3,6 @@ package compositor;
 /*TODO :
  *  - verifier maj de l'affichage (possible problème)
  *  
- *  icones déconnent
- *  
  *  - redimentionnement coince un peu
  *  - faire un mode modif (genre surbrillance)
  *  -ajout texte aux fenetres
