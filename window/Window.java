@@ -21,9 +21,8 @@ public class Window {
 	private Integer oldPosiX, oldPosiY, oldWidth, oldHeight;
 	private Integer posiXClose, posiXMaximize, posiXIconify;
 	private Boolean maximised=false;
-	private BufferedImage image;public Window() {
-		// TODO Auto-generated constructor stub
-	}
+	private BufferedImage image;
+	
 	private Application app;
 	
 	public Window(Application parApp, int x, int y, int w, int h) {
@@ -74,9 +73,6 @@ public class Window {
 		
 		context.clipRect(posiX+margin, posiY+marginTop, 
 				width-2*margin, height-marginTop-margin);
-		/*app.draw(context, posiX+margin, posiY+marginTop, 
-				width-2*margin, height-marginTop-margin);
-		*/
 
 		context.drawImage(image, null, posiX, posiY);
 		
@@ -140,7 +136,6 @@ public class Window {
 		if(Compositor.collision(e.getX(), e.getY(), margin, marginTop, width-2*margin, height-margin-marginTop)) {
 			e.translatePoint(-margin, -marginTop);
 			app.mouseMoved(e);
-			System.out.println("lulz");
 		}
 	}
 	public void mouseDragged(MouseEvent e) {
@@ -199,6 +194,7 @@ public class Window {
 			width=parWidth;
 			calculatePosiXButtons();
 			image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+			this.maj();
 		}
 	}
 	public Integer getHeight() {
@@ -208,6 +204,7 @@ public class Window {
 		if(parHeight>=2*marginTop) {
 			height=parHeight;
 			image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+			this.maj();
 		}
 	}
 	public Boolean isMaximised() {

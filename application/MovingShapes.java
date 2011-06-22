@@ -27,7 +27,7 @@ public class MovingShapes extends Thread implements Application {
 public void draw(Graphics2D context, int parX, int parY, int parW, int parH) {
 	x=parX; y=parY; w=parW; h=parH;
 	
-	context.setColor(couleur);
+	//context.setColor(couleur);
 	context.fillRect(x, y, w, h);
 	
 }
@@ -60,5 +60,18 @@ public void draw(Graphics2D context, int parX, int parY, int parW, int parH) {
 	public void keyPressed(KeyEvent e) {}
 	public void keyReleased(KeyEvent e) {}
 	public void keyTyped(KeyEvent e) {}
+
+
+
+
+
+
+
+
+	@Override
+	public void setPadre(Window papa) {
+		// TODO Auto-generated method stub
+		
+	}
 
 }
