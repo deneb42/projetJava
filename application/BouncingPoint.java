@@ -23,6 +23,7 @@ public class BouncingPoint extends Thread implements Application {
 	private Integer dy = 0;
 	
 	
+	
 	public BouncingPoint() {
 		
 		dx = (int)((Math.random()*10)+1);
@@ -84,7 +85,10 @@ public class BouncingPoint extends Thread implements Application {
 		super.finalize();
 	}
 	
-	public void mousePressed(MouseEvent e) {}
+	public void mousePressed(MouseEvent e) {
+		
+		
+	}
 	public void mouseReleased(MouseEvent e) {}
 	public void mouseMoved(MouseEvent e) {}
 	public void mouseDragged(MouseEvent e) {}

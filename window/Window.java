@@ -199,6 +199,7 @@ public class Window {
 			width=parWidth;
 			calculatePosiXButtons();
 			image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+			this.maj();
 		}
 	}
 	public Integer getHeight() {
@@ -208,6 +209,7 @@ public class Window {
 		if(parHeight>=2*marginTop) {
 			height=parHeight;
 			image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+			this.maj();
 		}
 	}
 	public Boolean isMaximised() {
