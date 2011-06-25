@@ -140,6 +140,7 @@ public class Compositor extends JFrame implements MouseListener, MouseMotionList
 					if(w.isMaximised()) {
 						w.restore();
 						w.setMaximised(false);
+						w.maj();
 					}
 					else {
 						w.save();

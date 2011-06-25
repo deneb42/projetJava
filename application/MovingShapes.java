@@ -3,11 +3,11 @@ package application;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Polygon;
-import java.awt.Rectangle;
 import java.awt.Shape;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Ellipse2D;
+import java.awt.geom.Rectangle2D;
 import java.awt.geom.RectangularShape;
 import java.util.ArrayList;
 
@@ -17,26 +17,16 @@ public class MovingShapes implements Application {
 	
 	private Integer posX = -1;
 	private Integer posY = -1;
-	private Integer Rx = 30;
-	private Integer Ry = 30;
-	private Integer Ex = 60;
-	private Integer Ey = 60;
-	private Integer Rw = 5;
-	private Integer Rh = 5;
-	private Integer Ew = 25;
-	private Integer Eh = 25;
 	private Integer index = 0;
-	private int[] Tx = {21, 35, 15};
-	private int[] Ty = {21, 35, 24};
+	private int[] Tx = new int[3];
+	private int[] Ty = new int[3];
 	private Window padre;
 	
 	public ArrayList<Shape> shapes = new ArrayList<Shape>();
 
 
 	public MovingShapes() {
-		shapes.add(new Rectangle(Rx, Ry, Rw, Rh));
-		shapes.add(new Ellipse2D.Double(Ex, Ey, Ew, Eh));
-		shapes.add(new Polygon(Tx,Ty,3));
+		
 	}
 	
 	public MovingShapes(Window papa) {
@@ -51,7 +41,17 @@ public class MovingShapes implements Application {
 	
 	@Override
 	public void draw(Graphics2D context, int parW, int parH) {
-		
+		if(shapes.size()==0) {
+			shapes.add(new Rectangle2D.Double((Math.random()*2*(parW-15)/3)+15, (Math.random()*2*(parH-15)/3)+15, 
+					(Math.random()*(parW-15)/2)+15,(Math.random()*(parH-15)/2)+15));
+			shapes.add(new Ellipse2D.Double((Math.random()*2*(parW-15)/3)+15, (Math.random()*2*(parH-15)/3)+15, 
+					(Math.random()*(parW-15)/2)+15,(Math.random()*(parH-15)/2)+15));
+			for(int i=0;i<3;i++) {
+				Tx[i] = (int)(Math.random()*parW);
+				Ty[i] = (int)(Math.random()*parH);
+			}
+			shapes.add(new Polygon(Tx,Ty,3));
+		}
 		context.setColor(Color.white);
 		context.fillRect(0, 0, parW, parH);
 		context.setColor(Color.ORANGE);
