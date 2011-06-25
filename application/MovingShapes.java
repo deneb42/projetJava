@@ -23,10 +23,12 @@ public class MovingShapes implements Application {
 	private Window padre;
 	
 	public ArrayList<Shape> shapes = new ArrayList<Shape>();
+	public ArrayList<Color> colors = new ArrayList<Color>();
 
 
 	public MovingShapes() {
-		
+		for(int i=0;i<3;i++)
+			colors.add(new Color((float)Math.random(), (float)Math.random(), (float)Math.random()));
 	}
 	
 	public MovingShapes(Window papa) {
@@ -54,9 +56,10 @@ public class MovingShapes implements Application {
 		}
 		context.setColor(Color.white);
 		context.fillRect(0, 0, parW, parH);
-		context.setColor(Color.ORANGE);
-		for(Shape s: shapes) {//pour s qui prend toutes les valeurs qu'il y a dans le tableau
-			context.fill(s);
+
+		for(int i=0;i<shapes.size();i++) {//pour s qui prend toutes les valeurs qu'il y a dans le tableau
+			context.setColor(colors.get(i));
+			context.fill(shapes.get(i));
 		}
 	}
 	
