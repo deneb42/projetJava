@@ -32,6 +32,12 @@ public class BouncingPoint extends Thread implements Application {
 		this();
 		setPadre(papa);
 	}
+	
+	@Override
+	public void setPadre(Window papa) {
+		padre = papa;
+		start();
+	}
 
 	public void draw(Graphics2D context, int parX, int parY, int parW, int parH) {
 		x = parX; y = parY; w = parW; h = parH;
@@ -68,8 +74,6 @@ public class BouncingPoint extends Thread implements Application {
 	    }
 	}
 	
-	
-	
 	@Override
 	public void run() {
 		while(true) {
@@ -98,10 +102,4 @@ public class BouncingPoint extends Thread implements Application {
 	public void keyPressed(KeyEvent e) {}
 	public void keyReleased(KeyEvent e) {}
 	public void keyTyped(KeyEvent e) {}
-
-	@Override
-	public void setPadre(Window papa) {
-		padre = papa;
-		start();
-	}
 }
