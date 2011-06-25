@@ -14,7 +14,7 @@ import application.Application;
 
 public class Window {
 	
-	public static final Integer marginTop=20, margin=4, iconSize=10, defaultSizeX=100, defaultSizeY=100, 
+	public static final Integer marginTop=20, margin=4, iconSize=20, defaultSizeX=100, defaultSizeY=100, 
 						sizeButton = marginTop-2*margin;
 	
 	private Integer posiX, posiY, width, height;
@@ -81,10 +81,10 @@ public class Window {
 
 	public Rectangle drawIcon(Graphics2D context, Integer x, Integer y) {
 		context.setColor(Color.black);
-		context.drawLine(x, y, x+iconSize, y);
-		context.drawLine(x, y, x, y+iconSize);
-		context.drawLine(x+iconSize, y+iconSize, x+iconSize, y);
-		context.drawLine(x, y+iconSize, x+iconSize, y+iconSize);
+		context.drawLine(x, y, x+iconSize-1, y);
+		context.drawLine(x, y, x, y+iconSize-1);
+		context.drawLine(x+iconSize-1, y+iconSize-1, x+iconSize-1, y);
+		context.drawLine(x, y+iconSize-1, x+iconSize-1, y+iconSize-1);
 		
 		context.drawImage(image.getScaledInstance(iconSize-2, iconSize-2, Image.SCALE_DEFAULT), x+1, y+1, null);
 		
