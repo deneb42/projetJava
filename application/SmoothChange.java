@@ -68,15 +68,15 @@ public class SmoothChange extends Thread implements Application{
 		super.finalize();
 	}
 
-	public void mousePressed(MouseEvent e) {System.out.println("Mouse Pressed in " + B);}
-	public void mouseReleased(MouseEvent e) {System.out.println("Mouse Released in " + B);}
-	public void mouseMoved(MouseEvent e) {System.out.println("Mouse Moved in " + B);}
-	public void mouseDragged(MouseEvent e) {System.out.println("Mouse Dragged in " + B);}
-	public void mouseClicked(MouseEvent e) {System.out.println("Mouse Clicked in " + B);}
+	public void mousePressed(MouseEvent e) {}
+	public void mouseReleased(MouseEvent e) {}
+	public void mouseMoved(MouseEvent e) {}
+	public void mouseDragged(MouseEvent e) {}
+	public void mouseClicked(MouseEvent e) {}
 	public void mouseWheel(MouseEvent e) {}
 	public void mouseEntered(MouseEvent e) {}
 	public void mouseExited(MouseEvent e) {}
-	public void keyPressed(KeyEvent e) {System.out.println("Key " + e.getKeyChar() + " pressed in " + B);}
-	public void keyReleased(KeyEvent e) {System.out.println("Key " + e.getKeyChar() + " released in " + B);}
-	public void keyTyped(KeyEvent e) {System.out.println("Key " + e.getKeyChar() + " typed in " + B);}
+	public void keyPressed(KeyEvent e) {}
+	public void keyReleased(KeyEvent e) {}
+	public void keyTyped(KeyEvent e) {}
 }

@@ -80,7 +80,13 @@ public class Window {
 	}
 
 	public Rectangle drawIcon(Graphics2D context, Integer x, Integer y) {
-		context.drawImage(image.getScaledInstance(iconSize, iconSize, Image.SCALE_DEFAULT), x, y, null);
+		context.setColor(Color.black);
+		context.drawLine(x, y, x+iconSize, y);
+		context.drawLine(x, y, x, y+iconSize);
+		context.drawLine(x+iconSize, y+iconSize, x+iconSize, y);
+		context.drawLine(x, y+iconSize, x+iconSize, y+iconSize);
+		
+		context.drawImage(image.getScaledInstance(iconSize-2, iconSize-2, Image.SCALE_DEFAULT), x+1, y+1, null);
 		
 		return new Rectangle(x, y, iconSize, iconSize);
 	}
