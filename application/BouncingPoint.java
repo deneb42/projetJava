@@ -14,8 +14,6 @@ public class BouncingPoint extends Thread implements Application {
 	private Integer YSIZE = 10;
 	private Integer posX = -1;
 	private Integer posY = -1;
-	private Integer x = 0;
-	private Integer y = 0;
 	private Integer w = 0;
 	private Integer h = 0;
 	private Integer dx = 0;
@@ -39,17 +37,17 @@ public class BouncingPoint extends Thread implements Application {
 		start();
 	}
 
-	public void draw(Graphics2D context, int parX, int parY, int parW, int parH) {
-		x = parX; y = parY; w = parW; h = parH;
+	public void draw(Graphics2D context, int parW, int parH) {
+		w = parW; h = parH;
 		
 		if(posX == -1) {
-			posX = (int)Math.random()*parX;
-			posY = (int)Math.random()*parY;
+			posX = (int)Math.random()*w;
+			posY = (int)Math.random()*h;
 		}
 		context.setColor(Color.white);
-		context.fillRect(x, y, w, h);
+		context.fillRect(0, 0, w, h);
 		context.setColor(Color.black);
-		context.fillOval(x+posX, y+posY, XSIZE, YSIZE);
+		context.fillOval(posX, posY, XSIZE, YSIZE);
 	}
 	
 	public void move() {

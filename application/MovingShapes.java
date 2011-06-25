@@ -13,26 +13,30 @@ import java.util.ArrayList;
 
 import window.Window;
 
-public class MovingShapes extends Thread implements Application {
+public class MovingShapes implements Application {
 	
 	private Integer posX = -1;
 	private Integer posY = -1;
-	private Integer x = 0;
-	private Integer y = 0;
-	private Integer w = 0;
-	private Integer h = 0;
+	private Integer Rx = 30;
+	private Integer Ry = 30;
+	private Integer Ex = 60;
+	private Integer Ey = 60;
+	private Integer Rw = 5;
+	private Integer Rh = 5;
+	private Integer Ew = 25;
+	private Integer Eh = 25;
 	private Integer index = 0;
-	private int[] tx = {1, 5, 10};
-	private int[] ty = {1, 5, 10};
+	private int[] Tx = {21, 35, 15};
+	private int[] Ty = {21, 35, 24};
 	private Window padre;
 	
 	public ArrayList<Shape> shapes = new ArrayList<Shape>();
 
 
 	public MovingShapes() {
-		shapes.add(new Rectangle(x, y, w, h));
-		shapes.add(new Ellipse2D.Double(x, y, 10, 10));
-		shapes.add(new Polygon(tx,ty,3));
+		shapes.add(new Rectangle(Rx, Ry, Rw, Rh));
+		shapes.add(new Ellipse2D.Double(Ex, Ey, Ew, Eh));
+		shapes.add(new Polygon(Tx,Ty,3));
 	}
 	
 	public MovingShapes(Window papa) {
@@ -46,13 +50,12 @@ public class MovingShapes extends Thread implements Application {
 	}
 	
 	@Override
-	public void draw(Graphics2D context, int parX, int parY, int parW, int parH) {
-		// TODO Auto-generated method stub
+	public void draw(Graphics2D context, int parW, int parH) {
 		
 		context.setColor(Color.white);
-		context.fillRect(parX, parY, parW, parH);
+		context.fillRect(0, 0, parW, parH);
 		context.setColor(Color.ORANGE);
-		for(Shape s:shapes) {//pour s qui prend toutes les valeurs qu'il y a dans le tableau
+		for(Shape s: shapes) {//pour s qui prend toutes les valeurs qu'il y a dans le tableau
 			context.fill(s);
 		}
 	}
@@ -68,7 +71,7 @@ public class MovingShapes extends Thread implements Application {
 				index = i;	
 				return;
 			}	
-		}					
+		}				
 	}
 
 	//Mettre à jour les coordonnées de la shape (Ellipse et rectangle se comportent en RectangularShape, et Polygon est un cas à part)
@@ -79,7 +82,8 @@ public class MovingShapes extends Thread implements Application {
 		}
 		
 		if(shapes.get(index) instanceof RectangularShape) {
-			((RectangularShape)shapes.get(index)).setFrame(x + e.getX() - posX, y + e.getY() - posY, w, h);
+			RectangularShape s = (RectangularShape)shapes.get(index);
+			s.setFrame(s.getX() + e.getX() - posX, s.getY() + e.getY() - posY, s.getWidth(), s.getHeight());
 			padre.maj();
 		}
 		else if(shapes.get(index) instanceof Polygon) {

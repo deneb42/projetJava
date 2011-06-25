@@ -7,6 +7,10 @@ package compositor;
  *  - faire un mode modif (genre surbrillance)
  *  -ajout texte aux fenetres
  *  
+ *  -problème dans la selection des fenetres.
+ *  
+ *  gérer des racourcis clavier
+ *  
  *  faire que la gestion des collisions internes a la fenetres soient gérées directemetn dans window.
  */
 
@@ -26,7 +30,6 @@ import java.util.ArrayList;
 
 import javax.swing.JFrame;
 
-import application.BouncingPoint;
 import application.MovingShapes;
 import application.SmoothChange;
 import window.Window;
@@ -192,46 +195,44 @@ public class Compositor extends JFrame implements MouseListener, MouseMotionList
 		for(int i=windows.size()-1;i>=0;i--) {
 			Window w = windows.get(i);
 			
-			//collision avec le bandeau
-			if(collision(e.getX(), e.getY(), w.getPosiX()+Window.margin, w.getPosiY()+Window.margin, 
-					w.getWidth()-3*Window.marginTop+Window.margin, Window.marginTop-Window.margin)) {
-				mode = 'd';
-				setCursor(new Cursor(Cursor.MOVE_CURSOR));
-			}
-			else {
-				//collision avec le margin d'en bas
-				if(collision(e.getX(), e.getY(), w.getPosiX(), w.getPosiY()+w.getHeight()-Window.margin, w.getWidth(), Window.margin)) {
-					mode = 'h';
-					setCursor(new Cursor(Cursor.S_RESIZE_CURSOR));
+			if(collision(e.getX(), e.getY(), w.getPosiX(), w.getPosiY(), w.getWidth(), w.getHeight())) {
+				
+				//collision avec le bandeau
+				if(collision(e.getX(), e.getY(), w.getPosiX()+Window.margin, w.getPosiY()+Window.margin, 
+						w.getWidth()-3*Window.marginTop+Window.margin, Window.marginTop-Window.margin)) {
+					mode = 'd';
+					setCursor(new Cursor(Cursor.MOVE_CURSOR));
+				}
+				else {
+					//collision avec le margin d'en bas
+					if(collision(e.getX(), e.getY(), w.getPosiX(), w.getPosiY()+w.getHeight()-Window.margin, w.getWidth(), Window.margin)) {
+						mode = 'h';
+						setCursor(new Cursor(Cursor.S_RESIZE_CURSOR));
+					}
+					
+					//collision avec le margin à droite
+					if(collision(e.getX(), e.getY(), w.getPosiX()+w.getWidth()-Window.margin, w.getPosiY(), Window.margin, w.getHeight())) {
+						if(mode=='h') {
+							mode='a';
+							setCursor(new Cursor(Cursor.SE_RESIZE_CURSOR));
+						}
+						else {
+							mode='w';
+							setCursor(new Cursor(Cursor.E_RESIZE_CURSOR));
+						}
+					}
 				}
 				
-				//collision avec le margin à droite
-				if(collision(e.getX(), e.getY(), w.getPosiX()+w.getWidth()-Window.margin, w.getPosiY(), Window.margin, w.getHeight())) {
-					if(mode=='h') {
-						mode='a';
-						setCursor(new Cursor(Cursor.SE_RESIZE_CURSOR));
-					}
-					else {
-						mode='w';
-						setCursor(new Cursor(Cursor.E_RESIZE_CURSOR));
-					}
-				}
-			}
-			
-			if(mode!=' ') {
 				windows.remove(w);
 				windows.add(w);
-				w.setMaximised(false);
+				
+				// peut etre remplacé par if mode == ' '
+				if(collision(e.getX(), e.getY(), w.getPosiX()+Window.margin, w.getPosiY()+Window.marginTop, 
+						w.getWidth()-2*Window.margin, w.getHeight()-Window.marginTop-Window.margin)) {
+					e.translatePoint(-w.getPosiX(), -w.getPosiY());
+					w.mousePressed(e);
+				}
 				return;
-			}
-		}
-		
-		if(windows.size()>0) {
-			if(collision(e.getX(), e.getY(), windows.get(windows.size()-1).getPosiX(), 
-					windows.get(windows.size()-1).getPosiY(), windows.get(windows.size()-1).getWidth(), 
-					windows.get(windows.size()-1).getHeight())) {
-				e.translatePoint(-windows.get(windows.size()-1).getPosiX(), -windows.get(windows.size()-1).getPosiY());
-				windows.get(windows.size()-1).mousePressed(e);
 			}
 		}
 	}
@@ -279,6 +280,7 @@ public class Compositor extends JFrame implements MouseListener, MouseMotionList
 				else
 					repaint();
 				
+				w.setMaximised(false);
 				mouseClickX=e.getX();
 				mouseClickY=e.getY();
 			}

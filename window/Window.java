@@ -32,7 +32,7 @@ public class Window {
 		calculatePosiXButtons();
 		
 		app = parApp;
-		image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+		image = new BufferedImage(width-2*margin, height-marginTop-margin, BufferedImage.TYPE_INT_ARGB);
 		app.setPadre(this);
 		maj();
 	}
@@ -74,7 +74,7 @@ public class Window {
 		context.clipRect(posiX+margin, posiY+marginTop, 
 				width-2*margin, height-marginTop-margin);
 
-		context.drawImage(image, null, posiX, posiY);
+		context.drawImage(image, null, posiX+margin, posiY+marginTop);
 		
 		return new Rectangle(posiX, posiY, width, height);
 	}
@@ -86,8 +86,7 @@ public class Window {
 	}
 	
 	public void maj() {
-		app.draw(image.createGraphics(), margin, marginTop, 
-				width-2*margin, height-marginTop-margin);
+		app.draw(image.createGraphics(), width-2*margin, height-marginTop-margin);
 		Compositor.getInstance().repaint(posiX, posiY, width, height);
 	}
 	
@@ -193,7 +192,7 @@ public class Window {
 		if(parWidth>3*marginTop) {
 			width=parWidth;
 			calculatePosiXButtons();
-			image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+			image = new BufferedImage(width-2*margin, height-marginTop-margin, BufferedImage.TYPE_INT_ARGB);
 			this.maj();
 		}
 	}
@@ -203,7 +202,7 @@ public class Window {
 	public void setHeight(Integer parHeight) {
 		if(parHeight>=2*marginTop) {
 			height=parHeight;
-			image = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+			image = new BufferedImage(width-2*margin, height-marginTop-margin, BufferedImage.TYPE_INT_ARGB);
 			this.maj();
 		}
 	}

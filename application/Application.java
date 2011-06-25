@@ -8,7 +8,7 @@ import window.Window;
 
 public interface Application {
 	
-	public void draw(Graphics2D context, int parX, int parY, int parW, int parH);
+	public void draw(Graphics2D context, int parW, int parH);
 	public void setPadre(Window papa);
 	
 	//for an implementation of mouse listener, mouse motion listener and key listener

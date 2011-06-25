@@ -35,9 +35,9 @@ public class SmoothChange extends Thread implements Application{
 		start();
 	}
 	
-	public void draw(Graphics2D context, int x, int y, int w, int h) {
+	public void draw(Graphics2D context, int w, int h) {
 		context.setColor(couleur);
-		context.fillRect(x, y, w, h);
+		context.fillRect(0, 0, w, h);
 	}
 
 	
