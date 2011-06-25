@@ -1,9 +1,6 @@
 package compositor;
 
 /*TODO :
- *  - verifier maj de l'affichage (possible problème)
- *  
- *  - redimentionnement coince un peu
  *  - faire un mode modif (genre surbrillance)
  *  -ajout texte aux fenetres
  *  
@@ -12,6 +9,9 @@ package compositor;
  *  exporter methodes fermetures, maxim, etc
  *  
  *  faire que la gestion des collisions internes a la fenetres soient gérées directemetn dans window.
+ * => fonction de collision dans windo qui retourne une valeur en fonction de la collision.
+ * 
+ * size pas bonne quand on fait maximisation puis iconification
  */
 
 import java.awt.Color;
