@@ -17,16 +17,19 @@ public class MovingShapes implements Application {
 	
 	private Integer posX = -1;
 	private Integer posY = -1;
-	private Integer index = 0;
+	private Boolean move = false;
 	private int[] Tx = new int[3];
 	private int[] Ty = new int[3];
 	private Window padre;
 	
 	public ArrayList<Shape> shapes = new ArrayList<Shape>();
+	public ArrayList<Color> colors = new ArrayList<Color>();
 
 
 	public MovingShapes() {
-		
+		for(int i=0;i<3;i++)
+			colors.add(new Color((float)Math.random(), (float)Math.random(), 
+					(float)Math.random(), (float)(Math.random()*0.25+0.75)));		
 	}
 	
 	public MovingShapes(Window papa) {
@@ -54,9 +57,10 @@ public class MovingShapes implements Application {
 		}
 		context.setColor(Color.white);
 		context.fillRect(0, 0, parW, parH);
-		context.setColor(Color.ORANGE);
-		for(Shape s: shapes) {//pour s qui prend toutes les valeurs qu'il y a dans le tableau
-			context.fill(s);
+
+		for(int i=0;i<shapes.size();i++) {//pour s qui prend toutes les valeurs qu'il y a dans le tableau
+			context.setColor(colors.get(i));
+			context.fill(shapes.get(i));
 		}
 	}
 	
@@ -64,11 +68,15 @@ public class MovingShapes implements Application {
 	//enregistrer les coordonnées d'origine de la shape
 	public void mousePressed(MouseEvent e)  {
 		//collision	
-		for(int i = 0; i < shapes.size(); i++) {
+		for(int i =shapes.size()-1; i>=0; i--) {
 			if(shapes.get(i).contains(e.getX(), e.getY())) {
 				posX = e.getX();
 				posY = e.getY();
-				index = i;	
+				move=true;
+				shapes.add(shapes.get(i));
+				colors.add(colors.get(i));
+				shapes.remove(i);
+				colors.remove(i);
 				return;
 			}	
 		}				
@@ -77,17 +85,17 @@ public class MovingShapes implements Application {
 	//Mettre à jour les coordonnées de la shape (Ellipse et rectangle se comportent en RectangularShape, et Polygon est un cas à part)
 	public void mouseDragged(MouseEvent e) {
 		//sortie si pas de shape sélectionnée
-		if (index==-1) {
+		if (!move) {
 			return;
 		}
 		
-		if(shapes.get(index) instanceof RectangularShape) {
-			RectangularShape s = (RectangularShape)shapes.get(index);
+		if(shapes.get(shapes.size()-1) instanceof RectangularShape) {
+			RectangularShape s = (RectangularShape)shapes.get(shapes.size()-1);
 			s.setFrame(s.getX() + e.getX() - posX, s.getY() + e.getY() - posY, s.getWidth(), s.getHeight());
 			padre.maj();
 		}
-		else if(shapes.get(index) instanceof Polygon) {
-			((Polygon)shapes.get(index)).translate(e.getX()-posX, e.getY()-posY);
+		else if(shapes.get(shapes.size()-1) instanceof Polygon) {
+			((Polygon)shapes.get(shapes.size()-1)).translate(e.getX()-posX, e.getY()-posY);
 			padre.maj();
 		}
 		posX = e.getX();
@@ -98,7 +106,7 @@ public class MovingShapes implements Application {
 	public void mouseReleased(MouseEvent e) {
 		posX = -1;
 		posY = -1;
-		index = -1;
+		move=false;
 	}
 	
 	public void mouseClicked(MouseEvent e) {}

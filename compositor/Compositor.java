@@ -9,6 +9,8 @@ package compositor;
  *  
  *  gérer des racourcis clavier
  *  
+ *  exporter methodes fermetures, maxim, etc
+ *  
  *  faire que la gestion des collisions internes a la fenetres soient gérées directemetn dans window.
  */
 
@@ -192,7 +194,17 @@ public class Compositor extends JFrame implements MouseListener, MouseMotionList
 	public void mousePressed(MouseEvent e) {
 		mouseClickX = e.getX(); mouseClickY = e.getY();
 		
-		if(keyPressed=='n') { // nouvelle fenetre
+		if(keyPressed=='b') { // nouvelle fenetre
+			mode='n';
+			windows.add(new Window(new BouncingPoint(), mouseClickX, mouseClickY));
+			return;
+		}
+		if(keyPressed=='m') { // nouvelle fenetre
+			mode='n';
+			windows.add(new Window(new MovingShapes(), mouseClickX, mouseClickY));
+			return;
+		}
+		if(keyPressed=='s') { // nouvelle fenetre
 			mode='n';
 			windows.add(new Window(new SmoothChange(), mouseClickX, mouseClickY));
 			return;
