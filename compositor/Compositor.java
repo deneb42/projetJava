@@ -3,11 +3,7 @@ package compositor;
 /*TODO :
  *  - faire un mode modif (genre surbrillance)
  *  -ajout texte aux fenetres
- *  
- *  gérer des racourcis clavier
- *  
- *  exporter methodes fermetures, maxim, etc
- *  
+ *
  *  faire que la gestion des collisions internes a la fenetres soient gérées directemetn dans window.
  * => fonction de collision dans windo qui retourne une valeur en fonction de la collision.
  * 
@@ -118,6 +114,29 @@ public class Compositor extends JFrame implements MouseListener, MouseMotionList
 		repaint();
 	}
 	
+	private void iconifyWindow(Window w) {
+		windows.remove(w);
+		if(icons.indexOf(null)!=-1)
+			icons.set(icons.indexOf(null), w); // si on trouve une place libre
+		else
+			icons.add(w);
+		
+		repaint();
+	}
+	
+	private void desiconifyWindow(int i) {
+		windows.add(icons.get(i));
+		if(i==icons.size()-1) {
+			icons.remove(i);
+			while(icons.size()>0 && icons.get(icons.size()-1)==null) {
+				icons.remove(icons.size()-1);
+			}
+		}
+		else
+			icons.set(i, null);
+		repaint();
+	}
+	
 	public static final boolean collision(int mouseX, int mouseY, int x, int y, int w, int h) {
     	
     	if(mouseX < x)
@@ -149,7 +168,7 @@ public class Compositor extends JFrame implements MouseListener, MouseMotionList
 				context.setClip(drawable);
 				drawable.subtract(new Area(icons.get(i).drawIcon(context, 
 						origIconX+(i/iMax)*(padding+iconSize), origIconY+(i%iMax)*
-						(padding+iconSize), iconSize)));
+						(padding+iconSize), iconSize) ) );
 			}
 		}
 		context.setClip(drawable);
@@ -183,13 +202,7 @@ public class Compositor extends JFrame implements MouseListener, MouseMotionList
 				//iconify
 				if(collision(e.getX(), e.getY(), w.getPosiXIconify(), w.getPosiY()+Window.margin, 
 						Window.sizeButton, Window.sizeButton)) {
-					windows.remove(w);
-					if(icons.indexOf(null)!=-1)
-						icons.set(icons.indexOf(null), w); // si on trouve une place libre
-					else
-						icons.add(w);
-					
-					repaint();
+					iconifyWindow(w);
 					return;
 				}
 				
@@ -197,6 +210,7 @@ public class Compositor extends JFrame implements MouseListener, MouseMotionList
 						w.getHeight())) {
 					e.translatePoint(-w.getPosiX(), -w.getPosiY());
 					w.mouseClicked(e);
+					return;
 				}
 			}
 		}
@@ -205,9 +219,7 @@ public class Compositor extends JFrame implements MouseListener, MouseMotionList
 		for(int i=0;i<icons.size();i++) {
 			if(collision(e.getX(), e.getY(), origIconX+(i/iMax)*(padding+iconSize), 
 					origIconY+(i%iMax)*(padding+iconSize), iconSize, iconSize)) {
-				windows.add(icons.get(i));
-				icons.set(i, null);
-				repaint();
+				desiconifyWindow(i);
 				return;
 			}
 		}
@@ -371,6 +383,38 @@ public class Compositor extends JFrame implements MouseListener, MouseMotionList
 	
 	@Override
 	public void keyTyped(KeyEvent e) {
+		//System.out.println("lulz : " + (int)e.getKeyChar() + ", " + (int)(KeyEvent.VK_W & KeyEvent.VK_CONTROL));
+		System.out.println("lulz : " + (int)e.getKeyChar());
+		switch((int)e.getKeyChar()) {
+		case 5:
+			if(icons.size()>0)
+				desiconifyWindow(icons.size()-1);
+			return;
+		case 9: // CTRL+i
+			if(windows.size()>0)
+				iconifyWindow(windows.get(windows.size()-1));
+			return;
+		case 13: // CTRL+m
+			if(windows.size()>0)
+				maximizeWindow(windows.get(windows.size()-1));
+			return;
+		case 17: // CTRL+q
+			if(windows.size()>0)
+				closeWindow(windows.get(windows.size()-1));
+			return;
+		case 18: // CTRL+r
+			if(windows.size()>0)
+				windows.get(windows.size()-1).maj();
+			return;
+		case 20: // CTRL+t
+			if(windows.size()>0) {
+				Window w = windows.get(0);
+				windows.remove(0);
+				windows.add(w);
+			}
+			return;
+		}
+		
 		if(windows.size()>0)
 			windows.get(windows.size()-1).keyTyped(e);
 	}
