@@ -4,7 +4,7 @@ package compositor;
  *  - faire un mode modif (genre surbrillance)
  *  -ajout texte aux fenetres
  *
- *  faire que la gestion des collisions internes a la fenetres soient gérées directemetn dans window.
+ *  faire que la gestion des collisions internes a la fenetres soient gérées directement dans window.
  * => fonction de collision dans windo qui retourne une valeur en fonction de la collision.
  * 
  * size pas bonne quand on fait maximisation puis iconification
@@ -160,7 +160,7 @@ public class Compositor extends JFrame implements MouseListener, MouseMotionList
 
 		for(int i=windows.size()-1;i>=0;i--) { // puis dessin des fenetres
 			context.setClip(drawable);
-			drawable.subtract(new Area(windows.get(i).draw(context)));
+			drawable.subtract(new Area(windows.get(i).draw(context, (i==windows.size()-1))));
 		}
 		for(int i=0;i<icons.size();i++) {
 			if(icons.get(i)!=null)
@@ -384,7 +384,7 @@ public class Compositor extends JFrame implements MouseListener, MouseMotionList
 	@Override
 	public void keyTyped(KeyEvent e) {
 		//System.out.println("lulz : " + (int)e.getKeyChar() + ", " + (int)(KeyEvent.VK_W & KeyEvent.VK_CONTROL));
-		System.out.println("lulz : " + (int)e.getKeyChar());
+		//System.out.println("lulz : " + (int)e.getKeyChar());
 		switch((int)e.getKeyChar()) {
 		case 5:
 			if(icons.size()>0)

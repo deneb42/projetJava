@@ -47,9 +47,13 @@ public class Window {
 		super.finalize();
 	}
 	
-	public Rectangle draw(Graphics2D context) {
+	public Rectangle draw(Graphics2D context, Boolean focused) {
 		
-		context.setColor(Color.black);
+		if(focused)
+			context.setColor(Color.black);
+		else
+			context.setColor(Color.darkGray);
+		
 		context.fillRect(posiX, posiY, width, marginTop); // dessus
 		context.fillRect(posiX, posiY, margin, height); // coté gauche
 		context.fillRect(posiX, posiY+height-margin, width, margin); // dessous
