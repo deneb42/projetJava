@@ -21,24 +21,12 @@ public class BouncingPoint extends Thread implements Application {
 	private Window padre;
 	private Color couleurfond = Color.white;
 	private Color couleurball = Color.black;
-	private Double H, S, B;
 	
 	
 	public BouncingPoint() {
-		dx = (int)((Math.random()*10)+1);
-		dy = (int)((Math.random()*10)+1);
-		
-		H = Math.random();
-		S = Math.random();
-		B = 0.8;
-		
-		couleurfond = new Color(Color.HSBtoRGB(H.floatValue(), S.floatValue(), B.floatValue()));
-		
-		H = Math.random();
-		S = Math.random();
-		
-		couleurball = new Color(Color.HSBtoRGB(H.floatValue(), S.floatValue(), B.floatValue()));
-		
+		dx = (int)((Math.random()*9)+1);
+		dy = (int)((Math.random()*9)+1);
+		setColor();
 	}
 	
 	public BouncingPoint(Window papa) {
@@ -50,6 +38,15 @@ public class BouncingPoint extends Thread implements Application {
 	public void setPadre(Window papa) {
 		padre = papa;
 		start();
+	}
+	
+	private void setColor() {
+		float a = (float)Math.random();
+		float b = (float)Math.random();
+		float c = (float)Math.random();
+		
+		couleurball = new Color(a, b, c);
+		couleurfond = new Color(1-a, 1-b, 1-c);
 	}
 
 	public void draw(Graphics2D context, int parW, int parH) {
@@ -108,7 +105,7 @@ public class BouncingPoint extends Thread implements Application {
 	public void mouseReleased(MouseEvent e) {}
 	public void mouseMoved(MouseEvent e) {}
 	public void mouseDragged(MouseEvent e) {}
-	public void mouseClicked(MouseEvent e) {}
+	public void mouseClicked(MouseEvent e) {setColor();}
 	public void mouseWheel(MouseEvent e) {}
 	public void mouseEntered(MouseEvent e) {}
 	public void mouseExited(MouseEvent e) {}
