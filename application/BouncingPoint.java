@@ -19,11 +19,26 @@ public class BouncingPoint extends Thread implements Application {
 	private Integer dx = 0;
 	private Integer dy = 0;
 	private Window padre;
+	private Color couleurfond = Color.white;
+	private Color couleurball = Color.black;
+	private Double H, S, B;
 	
 	
 	public BouncingPoint() {
 		dx = (int)((Math.random()*10)+1);
 		dy = (int)((Math.random()*10)+1);
+		
+		H = Math.random();
+		S = Math.random();
+		B = 0.8;
+		
+		couleurfond = new Color(Color.HSBtoRGB(H.floatValue(), S.floatValue(), B.floatValue()));
+		
+		H = Math.random();
+		S = Math.random();
+		
+		couleurball = new Color(Color.HSBtoRGB(H.floatValue(), S.floatValue(), B.floatValue()));
+		
 	}
 	
 	public BouncingPoint(Window papa) {
@@ -44,9 +59,9 @@ public class BouncingPoint extends Thread implements Application {
 			posX = (int)Math.random()*w;
 			posY = (int)Math.random()*h;
 		}
-		context.setColor(Color.white);
+		context.setColor(couleurfond);
 		context.fillRect(0, 0, w, h);
-		context.setColor(Color.black);
+		context.setColor(couleurball);
 		context.fillOval(posX, posY, XSIZE, YSIZE);
 	}
 	
