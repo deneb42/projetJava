@@ -41,7 +41,6 @@ public class Compositor extends JFrame implements MouseListener, MouseMotionList
 	private static final long serialVersionUID = 1493982699619655700L;
 	private static Compositor instance = null;
 	
-	
 	//variables pour les event
 	private Integer mouseClickX=0, mouseClickY=0;
 	private Character mode=' ', keyPressed=' ';
@@ -51,10 +50,11 @@ public class Compositor extends JFrame implements MouseListener, MouseMotionList
 	private ArrayList<Window> icons = new ArrayList<Window>();
 	
 	//constantes icones
-	private Integer origIconX = 50, origIconY=40, padding=10;
+	private static Integer origIconX = 50, origIconY=40, padding=10, iconSize=20;
 	private Integer iMax;
 	
 	// Fin variables ---------------------------------------------------------------------
+	
 	
 	public static Compositor getInstance() {
 		if (instance == null)
@@ -75,7 +75,7 @@ public class Compositor extends JFrame implements MouseListener, MouseMotionList
 		setVisible(true);
 		createBufferStrategy(2);
 		
-		iMax = (getHeight()-origIconY)/(padding+Window.iconSize); 
+		iMax = (getHeight()-origIconY)/(padding+iconSize); 
 		// le nombre max d'icones sur une hauteur de fenetre
 		
 		for(int i=0;i<10;i++) {
@@ -93,6 +93,47 @@ public class Compositor extends JFrame implements MouseListener, MouseMotionList
 		addKeyListener(this);
 	}
 	
+	
+	private void closeWindow(Window w) {
+		windows.remove(w);
+		repaint(w.getPosiX(),w.getPosiY(), w.getWidth(), w.getHeight());
+		w = null;
+	}
+	
+	private void maximizeWindow(Window w) {
+		if(w.isMaximised()) {
+			w.restore();
+			w.setMaximised(false);
+			w.maj();
+		}
+		else {
+			w.save();
+			w.setMaximised(true);
+			w.setPosiX(0); w.setPosiY(0);
+			w.setWidth(getWidth()); w.setHeight(getHeight());
+			
+		}
+		windows.remove(w);
+		windows.add(w);
+		repaint();
+	}
+	
+	public static final boolean collision(int mouseX, int mouseY, int x, int y, int w, int h) {
+    	
+    	if(mouseX < x)
+    		return false;
+    	if(mouseY < y)
+    		return false;
+		if(mouseX > x + w)
+        	return false;
+    	if(mouseY > y + h)
+        	return false;
+    		
+    	return true;
+    }
+	
+	
+	// Overrided methods --------------------------------------------------------------------------------
 	@Override
 	public void paint(Graphics g) {
 		Graphics2D context = (Graphics2D)g;
@@ -107,8 +148,8 @@ public class Compositor extends JFrame implements MouseListener, MouseMotionList
 			{
 				context.setClip(drawable);
 				drawable.subtract(new Area(icons.get(i).drawIcon(context, 
-						origIconX+(i/iMax)*(padding+Window.iconSize), origIconY+(i%iMax)*
-						(padding+Window.iconSize))));
+						origIconX+(i/iMax)*(padding+iconSize), origIconY+(i%iMax)*
+						(padding+iconSize), iconSize)));
 			}
 		}
 		context.setClip(drawable);
@@ -116,44 +157,26 @@ public class Compositor extends JFrame implements MouseListener, MouseMotionList
 		context.fillRect(0, 0, getWidth(), getHeight());
 	}
 	
-	
-	
 	@Override
 	public void mouseClicked(MouseEvent e) {
 		
-		for(int i=windows.size()-1;i>=0;i--) { // parcours de la fin au debut (pour prendre les fenetres par ordre d'apparition
+		for(int i=windows.size()-1;i>=0;i--) { // parcours de la fin au debut (pour prendre les fenetres par ordre d'apparition)
 			Window w = windows.get(i);
 			
 			if(collision(e.getX(), e.getY(), w.getPosiX(), w.getPosiY(), w.getWidth(), w.getHeight())) {
-			//premier test pour voir si collision avec la fenetre (optimisation + evite des erreurs si les boutons sortent de la fenetre)
+			//premier test pour voir si collision avec la fenetre
 				
 				//fermeture
 				if(collision(e.getX(), e.getY(), w.getPosiXClose(), w.getPosiY()+Window.margin, 
 						Window.sizeButton, Window.sizeButton)) {
-					windows.remove(w);
-					repaint(w.getPosiX(),w.getPosiY(), w.getWidth(), w.getHeight());
-					w = null;
+					closeWindow(w);
 					return;
 				}
 				
 				//Maximize
 				if(collision(e.getX(), e.getY(), w.getPosiXMaximize(), w.getPosiY()+Window.margin, 
 						Window.sizeButton, Window.sizeButton)) {
-					if(w.isMaximised()) {
-						w.restore();
-						w.setMaximised(false);
-						w.maj();
-					}
-					else {
-						w.save();
-						w.setMaximised(true);
-						w.setPosiX(0); w.setPosiY(0);
-						w.setWidth(getWidth()); w.setHeight(getHeight());
-						
-					}
-					windows.remove(w);
-					windows.add(w);
-					repaint();
+					maximizeWindow(w);
 					return;
 				}
 				
@@ -180,8 +203,8 @@ public class Compositor extends JFrame implements MouseListener, MouseMotionList
 		
 		//desiconification
 		for(int i=0;i<icons.size();i++) {
-			if(collision(e.getX(), e.getY(), origIconX+(i/iMax)*(padding+Window.iconSize), 
-					origIconY+(i%iMax)*(padding+Window.iconSize), Window.iconSize, Window.iconSize)) {
+			if(collision(e.getX(), e.getY(), origIconX+(i/iMax)*(padding+iconSize), 
+					origIconY+(i%iMax)*(padding+iconSize), iconSize, iconSize)) {
 				windows.add(icons.get(i));
 				icons.set(i, null);
 				repaint();
@@ -355,19 +378,4 @@ public class Compositor extends JFrame implements MouseListener, MouseMotionList
 	//override but useless
 	public void mouseEntered(MouseEvent e) {}
 	public void mouseExited(MouseEvent e) {}
-	
-	
-	public static final boolean collision(int mouseX, int mouseY, int x, int y, int w, int h) {
-    	
-    	if(mouseX < x)
-    		return false;
-    	if(mouseY < y)
-    		return false;
-		if(mouseX > x + w)
-        	return false;
-    	if(mouseY > y + h)
-        	return false;
-    		
-    	return true;
-    }
 }

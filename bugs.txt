@@ -1,1 +1,0 @@
-- le croix de quitter s'agrandit un max lorsque on passe au dessus

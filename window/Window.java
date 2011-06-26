@@ -14,7 +14,7 @@ import application.Application;
 
 public class Window {
 	
-	public static final Integer marginTop=20, margin=4, iconSize=20, defaultSizeX=100, defaultSizeY=100, 
+	public static final Integer marginTop=20, margin=4, defaultSizeX=100, defaultSizeY=100, 
 						sizeButton = marginTop-2*margin;
 	
 	private Integer posiX, posiY, width, height;
@@ -70,16 +70,13 @@ public class Window {
 		// minimalisation
 		context.drawRect(posiXIconify, posiY+margin, sizeButton, sizeButton);
 		context.fillRect(posiXIconify+margin/2, posiY+marginTop-2*margin, marginTop-3*margin, margin/2);
-		
-		context.clipRect(posiX+margin, posiY+marginTop, 
-				width-2*margin, height-marginTop-margin);
 
 		context.drawImage(image, null, posiX+margin, posiY+marginTop);
 		
 		return new Rectangle(posiX, posiY, width, height);
 	}
 
-	public Rectangle drawIcon(Graphics2D context, Integer x, Integer y) {
+	public Rectangle drawIcon(Graphics2D context, Integer x, Integer y, Integer iconSize) {
 		context.setColor(Color.black);
 		context.drawLine(x, y, x+iconSize-1, y);
 		context.drawLine(x, y, x, y+iconSize-1);
