@@ -85,7 +85,7 @@ public class Window {
 		context.drawLine(x, y, x+iconSize-1, y);
 		context.drawLine(x, y, x, y+iconSize-1);
 		context.drawLine(x+iconSize-1, y+iconSize-1, x+iconSize-1, y);
-		context.drawLine(x, y+iconSize-1, x+iconSize-1, y+iconSize-1);
+		context.drawLine(x, y+iconSize-1, x+iconSize-1, y+iconSize-1); // cadre autours de l'icone
 		
 		context.drawImage(image.getScaledInstance(iconSize-2, iconSize-2, Image.SCALE_DEFAULT), x+1, y+1, null);
 		
