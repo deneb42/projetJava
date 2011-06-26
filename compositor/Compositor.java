@@ -422,4 +422,11 @@ public class Compositor extends JFrame implements MouseListener, MouseMotionList
 	//override but useless
 	public void mouseEntered(MouseEvent e) {}
 	public void mouseExited(MouseEvent e) {}
+	
+	
+	// main -------------------------------------------------------------------------------------------
+	
+	public static void main(String[] args) {
+		Compositor.getInstance();
+	}
 }
