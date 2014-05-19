@@ -8,8 +8,6 @@ import java.awt.event.MouseEvent;
 import window.Window;
 
 public class SmoothChange extends Thread implements Application{
-
-	private static final long serialVersionUID = -6461622400547388552L;
 	private static final Double CONST_VAL_S=0.01;
 	
 	private Window padre;
